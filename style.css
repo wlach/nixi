@@ -1,0 +1,64 @@
+/* Accent Colour: #5A7F85 */
+
+/* General */
+a { color: #5A7F85; }
+div.container { overflow: hidden; margin: 40px auto; width: 960px; }
+h2 { font-weight: bold; font-size: 22px; color: #000000; margin: 0 0 0.81em; line-height: 1.62em; }
+p { font-size: 14px; color: #404040; margin: 0 0 0.81em; line-height: 1.25em}
+
+/* Header */
+#header { background: #000 url('images/header_bg.gif') repeat-x left bottom; padding: 10px; height: 30px; margin: 0 0 10px; position: relative; }
+#header h1 { line-height: 1; float: left; margin: 0; font-size: 28px; font-weight: bold; color: #FFFFFF; }
+#header h1 a { line-height: 1; float: left; margin: 0; font-size: 28px; font-weight: bold; color: #FFFFFF; }
+#header h1 a:hover { text-decoration: none; }
+#header h1 span { font-size: 18px; font-weight: bold; color: #ADBFC2; }
+#header h1 span.beta { font-size: 18px; color: #FF5555; }
+#header p { float: left; line-height: 1; margin: 0 0 0 10px; font-size: 18px; color: #D6DFE1; position: relative; bottom: -8px;  }
+
+/* Panels */
+#panels { padding: 0 0 0 0; overflow: hidden; width: 100%; }
+#panels p { font-size: 12px; color: #000000; }
+#panels div.panel h2 { line-height: 1; font-weight: bold; padding: 5px 0 5px 10px; margin: 0; font-size: 16px; }
+#panels div.panel h2 a.link-text-selected { font-weight: bold; color: #000; }
+#panels div.panel h2 a.link-text-selected:hover { text-decoration: none; cursor: pointer; }
+#panels div.content { padding: 10px 20px; }
+#panels div.content p { margin: auto; }
+
+/* Plan a Trip */
+div.ui-layout-west { padding-top: 8px; }
+#panels form { margin: auto; }
+#panels form div { clear: both; overflow: hidden; margin: 0; padding: 0 0 5px; }
+#panels form div.submit { margin: 0; padding: 8px 0 0 0; text-align: right; }
+#panels form p.error { color:#F00; }
+#panels form a.help { color:#22F; }
+#panels form p input { width: 236px; }
+#panels form input.text_error { border-color: #BB0000 #EE0000 #FF0000 #EE0000; }
+#panels form div.location-input { width: 244px; clear: none; float: left; overflow: hidden;}
+#panels form div.reverse-input { width: 40px; clear: none; padding: 32px 4px; vertical-align: middle; overflow: hidden;}
+
+/* Directions */
+#route-plan { display: none; }
+#route-plan ol { margin: 0; padding: 0; }
+#route-plan ol li { margin: 0 0 10px; padding: 0 0 10px 24px; list-style: none; background-position: top left; background-repeat: no-repeat; border-bottom: 1px dotted #808080; }
+#route-plan ol li.depart { background-image: url('../images/label_from.png');}
+#route-plan ol li.walk { background-image: url('../images/icon_walk.png'); }
+#route-plan ol li.board { background-image: url('../images/icon_bus.png'); }
+#route-plan ol li.alight { background-image: url('../images/icon_walk.png'); }
+#route-plan ol li.arrive { background-image: url('../images/label_to.png');}
+#route-plan p { margin: 0 0 10px; }
+#route-plan p.feedback { color: #808080; margin: 0; }
+#route-plan p.warning { color: #FF5555; }
+#route-plan a { color: #22F; }
+
+/* Map */
+div.ui-layout-center { padding-top: 8px; }
+#map_canvas { width: 100%; height: 100%; }
+#map_canvas div.tooltip { white-space: nowrap; padding: 2px; color: #000000; font-weight: bold; font-size: 12px; }
+
+/* About pages */
+#content { margin: 10px 40px 20px 20px; }
+
+/* Footer */
+#footer p { margin: 0 0 10px; }
+#footer p.nav { color: #C0C0C0; }
+#footer p.legal { color: #808080; }
