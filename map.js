@@ -12,7 +12,7 @@ function init(minLat, minLon, maxLat, maxLon) {
                        applyDefaultStyles: true,
                        west: { size: 320 },
                        north: { innerHeight: 30 },
-                       center: { onresize_end: function () { map.setCenter(map.getCenter(), map.getZoom()); } } });
+                       center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
     map.fitBounds(bb);
     
     var placeService = new google.maps.places.PlacesService(map);
