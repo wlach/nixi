@@ -28,13 +28,13 @@ p { font-size: 14px; color: #404040; margin: 0 0 0.81em; line-height: 1.25em}
 div.ui-layout-west { padding-top: 8px; }
 #panels form { margin: auto; }
 #panels form div { clear: both; overflow: hidden; margin: 0; padding: 0 0 5px; }
-#panels form div.submit { margin: 0; padding: 8px 0 0 0; text-align: right; }
+#panels form div.submit { width: 100%; margin: 0; padding: 8px 0 0 0; text-align: right; }
 #panels form p.error { color:#F00; }
 #panels form a.help { color:#22F; }
 #panels form p input { width: 236px; }
 #panels form input.text_error { border-color: #BB0000 #EE0000 #FF0000 #EE0000; }
 #panels form div.location-input { width: 244px; clear: none; float: left; overflow: hidden;}
-#panels form div.reverse-input { width: 40px; clear: none; padding: 32px 4px; vertical-align: middle; overflow: hidden;}
+#panels form div.reverse-input { clear: none; padding: 32px 4px; vertical-align: middle; overflow: hidden;}
 
 /* Directions */
 #route-plan { display: none; }
