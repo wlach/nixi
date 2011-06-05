@@ -58,15 +58,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at erat sem,
       </div>
       <div class="panel">
 	<div class="content">
+	  <div class="ui-widget" style="padding: 8px 0px;" id="error-widget">
+	    <div class="ui-state-error ui-corner-all" style="padding: 8px;"> 
+	      <p id="error-description"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .7em;"></span> 
+		<strong>Error:</strong> Unable to get directions. Please make sure you have a proper Internet connection and double check "from" and "to" fields.</p>	     
+	    </div>
+	  </div>
 	  <form id="directions-form" class="ui-form">
 	    <div class="location-input">
 	      <p>
 		<strong>From</strong><br />
-		<input id="from-input" type="text" />
+		<input id="from-input" type="text" required/>
 	      </p>
 	      <p>
 		<strong>To</strong><br />
-		<input id="to-input" type="text"/>
+		<input id="to-input" type="text" required/>
 	      </p>
 	    </div>
 	    <div class="reverse-input">

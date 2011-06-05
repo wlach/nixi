@@ -12,7 +12,7 @@ function init(minLat, minLon, maxLat, maxLon) {
                        applyDefaultStyles: true,
                        west: { size: 320 },
                        north: { innerHeight: 30 },
-                       center: { onresize_end: function () { map.setCenter(map.getCenter(), map.getZoom()); } } });
+                       center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
     map.fitBounds(bb);
     
     var placeService = new google.maps.places.PlacesService(map);
@@ -36,6 +36,8 @@ function init(minLat, minLon, maxLat, maxLon) {
 
     $("#plan-button").button();
     $("form#directions-form").submit(function() {
+	$('#error-widget').hide();
+
 	var oldPlanButtonVal = $("#plan-button").val();
 	
 	$("#plan-button").attr('disabled', 'disabled');
@@ -54,6 +56,7 @@ function init(minLat, minLon, maxLat, maxLon) {
 	    if (status == google.maps.DirectionsStatus.OK) {
 		directionsDisplay.setDirections(response);
 	    } else {
+		$('#error-widget').show();
 		console.log("Error processing directions!");
 	    }
 	});
