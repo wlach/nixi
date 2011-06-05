@@ -35,6 +35,8 @@ function init(minLat, minLon, maxLat, maxLon) {
 
     $("#plan-button").button();
     $("form#directions-form").submit(function() {
+	$('#error-widget').hide();
+
 	var oldPlanButtonVal = $("#plan-button").val();
 	
 	$("#plan-button").attr('disabled', 'disabled');
@@ -53,6 +55,7 @@ function init(minLat, minLon, maxLat, maxLon) {
 	    if (status == google.maps.DirectionsStatus.OK) {
 		directionsDisplay.setDirections(response);
 	    } else {
+		$('#error-widget').show();
 		console.log("Error processing directions!");
 	    }
 	});
