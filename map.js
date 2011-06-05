@@ -30,6 +30,7 @@ function init(minLat, minLon, maxLat, maxLon) {
           }));
 	  })},
     }
+    $("#city-selector").button();
     $("#from-input").autocomplete(autocomplete);
     $("#to-input").autocomplete(autocomplete);    
 
