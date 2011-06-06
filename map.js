@@ -1,9 +1,13 @@
 function init(minLat, minLon, maxLat, maxLon) {
     var bb = new google.maps.LatLngBounds(new google.maps.LatLng(minLat, minLon),
 					  new google.maps.LatLng(maxLat, maxLon));
-    var map = new google.maps.Map(document.getElementById("map_canvas"), { zoom: 6, 
+    var map = new google.maps.Map(document.getElementById("map_canvas"), { zoom: 1, 
 									   mapTypeId: google.maps.MapTypeId.ROADMAP,
 									   center: bb.getCenter() });
+
+    var bikeLayer = new google.maps.BicyclingLayer();
+    bikeLayer.setMap(map);    
+
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setMap(map);
     var directionsService = new google.maps.DirectionsService();
@@ -73,4 +77,88 @@ function init(minLat, minLon, maxLat, maxLon) {
 	$("#from-input").val($("#to-input").val());
 	$("#to-input").val(fromval);
     });    
+
+    var imageCanvas = document.createElement("canvas");
+
+    var bixiBounds = new google.maps.LatLngBounds();
+    var infoWindow = new google.maps.InfoWindow();
+    google.maps.event.addListener(map, 'click', function() {
+	infoWindow.close();
+    });
+
+    $.ajax({
+        type: "GET",
+	url: "bikeStations.xml",
+	dataType: "xml",
+	success: function(xml) {
+	    $(xml).find('station').each(function() {
+
+		var numBikes = parseInt($(this).find('nbBikes').text());
+		var numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
+		
+		function createIcon(numBikes, numEmptyDocks) {
+		    var radius;
+		    var alpha;
+		    if (numBikes == 0 && numEmptyDocks == 0) {
+			// edge case: station with nothing in it
+			radius = 5;
+			alpha = 0.0;
+		    } else {
+			radius = (numBikes+numEmptyDocks)/2;
+			if (radius > 20) {
+			    radius = 10;
+			} else if (radius < 5) {
+			    radius = 5;
+			}
+
+			alpha = numBikes / (numBikes+numEmptyDocks);
+			if (alpha > 0.5 && alpha < 1.0) {
+			    alpha=0.5;
+			} else if (alpha < 0.1 && alpha > 0.0) {
+			    alpha = 0.1;
+			}
+		    }
+		    imageCanvas.width = radius*2+4;
+		    imageCanvas.height = radius*2+4;
+		    var context = imageCanvas.getContext("2d");
+		    
+		    context.clearRect(0,0,radius*2, radius*2);
+		    
+		    context.fillStyle = "rgba(255,0,0," + alpha + ")";
+		    context.beginPath();
+		    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
+		    context.fill();
+
+		    context.strokeStyle = "#f00";
+		    context.beginPath();
+		    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
+		    context.stroke();
+
+		    return imageCanvas.toDataURL();
+
+		}
+		var iconURL = createIcon(numBikes, numEmptyDocks);
+
+		var position = new google.maps.LatLng($(this).find('lat').text(),
+						      $(this).find('long').text());
+		bixiBounds.extend(position);
+
+		var description = "Bikes: " + numBikes + ' - ' + "Docks: " + numEmptyDocks;
+
+		var marker = new google.maps.Marker({
+		    position: position, 
+		    map: map,
+		    icon: iconURL
+		});
+
+		google.maps.event.addListener(marker, 'click', function() {		   
+		    infoWindow.setContent(description);
+		    infoWindow.open(map, marker);
+		});
+
+	    });
+
+	    map.fitBounds(bixiBounds);
+	}	       
+    });
 }
