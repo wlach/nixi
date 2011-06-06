@@ -34,6 +34,12 @@
   <div id="header" class="ui-layout-north">
     <h1><a href="/">example-map-site<span>.com</span></a></h1>
     <p>Insert subtitle here</p>
+    <div id="nav">
+      <select id="city-selector">
+	<option>Montr&eacute;al</option>
+	<option>Toronto</option>
+      </select>
+    </div>
   </div>
 
   <div class="ui-layout-west">
@@ -47,12 +53,30 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at erat sem,
       </div>
       <div class="panel">
 	<div class="content">
-	  <form id="location-selection">
-	    <b>City</b><br/>
-	    <select id="city-selector">
-	      <option>Montr&eacute;al</option>
-	      <option>Toronto</option>
-	    </select>
+	  <div id="tab-selector">
+	    <input type="radio" id="find-nearby" name="radio" checked="checked"/><label for="find-nearby">Find Nearby</label>
+	    <input type="radio" id="trip-planner" name="radio"/><label for="trip-planner">Plan Trip</label>
+	  </div>
+	</div>
+      </div>     
+      <div class="panel" id="nearby-panel">
+	<div class="content">
+	  <div class="ui-widget" style="padding: 8px 0px;" id="error-widget">
+	    <div class="ui-state-error ui-corner-all" style="padding: 8px;"> 
+	      <p id="error-description"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .7em;"></span> 
+		<strong>Error:</strong> Unable to get directions. Please make sure you have a proper Internet connection and double check "from" and "to" fields.</p>	     
+	    </div>
+	  </div>
+	  <form id="nearby-form" class="ui-form">
+	    <div class="location-input">
+	      <p>
+		<strong>Where</strong><br />
+		<input id="nearby-input" type="text" required autofocus/>
+	      </p>
+	    </div>
+	    <div class="submit">
+	      <input type="submit" id="find-nearby-button" value="Find!" />
+	    </div>
 	  </form>
 	</div>
       </div>
@@ -79,7 +103,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at erat sem,
 	      <div id="reverse-button"></div>
 	    </div>
 	    <div class="submit">
-	      <input type="submit" id="plan-button" value="Get Directions" />
+	      <input type="submit" id="plan-button" value="Plan!" />
 	    </div>
 	  </form>
 	</div> 

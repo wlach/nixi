@@ -34,9 +34,12 @@ function init(minLat, minLon, maxLat, maxLon) {
           }));
 	  })},
     }
+    
+    $("#nearby-input").autocomplete(autocomplete);
+    $("#find-nearby-button").button();
+
     $("#from-input").autocomplete(autocomplete);
     $("#to-input").autocomplete(autocomplete);    
-
     $("#plan-button").button();
     $("form#directions-form").submit(function() {
 	$('#error-widget').hide();
@@ -65,6 +68,17 @@ function init(minLat, minLon, maxLat, maxLon) {
 	});
 
 	return false;
+    });
+
+    $("#tab-selector").buttonset();
+    $('input#trip-planner').click(function()  {
+	$('div#nearby-panel').hide();
+	$('div#trip-planner-panel').show();
+    });
+
+    $('input#find-nearby').click(function() {
+	$('div#nearby-panel').show();
+	$('div#trip-planner-panel').hide();
     });
 
     $("#reverse-button").button({
