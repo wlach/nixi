@@ -35,8 +35,32 @@ function init(minLat, minLon, maxLat, maxLon) {
 	  })},
     }
     
+    var locationMarker = new google.maps.Marker({
+	map: map,
+	visible: false
+    });   
     $("#nearby-input").autocomplete(autocomplete);
     $("#find-nearby-button").button();
+    $("form#nearby-form").submit(function() {	
+	var oldFindButtonVal = $("#find-nearby-button").val();
+
+	$("#find-nearby-button").attr('disabled', 'disabled');
+	$("#find-nearby-button").val("Working...");
+	geocoder.geocode( {'address': $("#nearby-input").val(), 'bounds': bb }, function(results, status) {
+	    $("#find-nearby-button").val(oldFindButtonVal);
+	    $("#find-nearby-button").removeAttr('disabled');
+	    
+	    if (results.length > 0) {
+		var latlng = results[0].geometry.location;
+		locationMarker.setPosition(latlng);
+		locationMarker.setVisible(true);
+		map.setCenter(latlng);
+		map.setZoom(15);	
+	    }
+	});
+
+	return false;
+    });
 
     $("#from-input").autocomplete(autocomplete);
     $("#to-input").autocomplete(autocomplete);    
