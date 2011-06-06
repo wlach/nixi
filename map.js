@@ -69,6 +69,8 @@ function init(minLat, minLon, maxLat, maxLon) {
     $("#plan-button").button();
     $("form#directions-form").submit(function() {
 	$('#error-widget').hide();
+	$('#from-input').blur();
+	$('#to-input').blur();
 
 	var oldPlanButtonVal = $("#plan-button").val();
 	
