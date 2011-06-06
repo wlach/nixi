@@ -41,7 +41,9 @@ function init(minLat, minLon, maxLat, maxLon) {
     });   
     $("#nearby-input").autocomplete(autocomplete);
     $("#find-nearby-button").button();
-    $("form#nearby-form").submit(function() {	
+    $("form#nearby-form").submit(function() {
+	$("#nearby-input").blur();
+	
 	var oldFindButtonVal = $("#find-nearby-button").val();
 
 	$("#find-nearby-button").attr('disabled', 'disabled');
