@@ -7,6 +7,7 @@
   <link href="scaffold.css" rel="stylesheet" type="text/css" />
   <link href="style.css" rel="stylesheet" type="text/css" />
 
+
   <link rel="icon" type="image/png" href="images/nixi-favico.png"/>
 
   <link href="aristo-jquery-theme/css/Aristo/jquery-ui-1.8.7.custom.css" type="text/css" rel="stylesheet" />
@@ -17,7 +18,49 @@
   <script type="text/javascript" src="http://code.jquery.com/ui/1.8.13/jquery-ui.min.js"></script>
   
   <script type="text/javascript" src="layout/jquery.layout.min-1.2.0.js"></script>
+  <script type="text/javascript" src="javascripts/js-class.js" type="text/javascript"></script>
+  <script type="text/javascript" src="javascripts/bluff-min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="javascripts/ICanHaz.min.js" type="text/javascript"></script>
+  
+  <script id="stations" type="text/html">
+    <div id="nearby-content">
+      <h2>Stations near {{ location }}</h2>
+      {{#stations}}
+      <div class="nearby-station">
+	<table>
+	  <tr>
+	    <td class="station-graph">
+	    <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
+	    </td>
+	  <td class="station">
+	    <p class="station-name">{{ name }}</p>
+	    <p class="station-info">Distance: {{ distance }}m - Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</p>
+	  </td>
+	  </tr>
+	</table>
+      </div>
+      {{/stations}}
+    </div>
+  </script>
+
+  <script id="station2" type="text/html">
+    <div class="nearby-station">
+      <table>
+	<tr>
+	  <td class="station-graph">
+	    <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
+	  </td>
+	  <td class="station">
+	    <p class="station-name">{{ name }}</p>
+	    <p class="station-info">Distance: {{ distance }}m - Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</p>
+	  </td>
+	</tr>
+      </table>
+    </div>
+  </script>
+
   <script type="text/javascript" src="map.js"></script>
+
   <script type="text/javascript">
     $(document).ready(function () {
         init(45.52, -73.71, 45.75, -73.09);
@@ -80,6 +123,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at erat sem,
 	      <input type="submit" id="find-nearby-button" value="Find!" />
 	    </div>
 	  </form>
+	</div>
+      </div>
+      <div class="panel" id="nearby">
+	<div class="content">
+	  <div id="nearby-content">
+	  </div>
 	</div>
       </div>
       <div class="panel" id="trip-planner-panel">

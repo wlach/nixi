@@ -61,6 +61,15 @@ div.ui-layout-west { overflow: auto; padding-top: 8px; }
 #route-plan p.warning { color: #FF5555; }
 #route-plan a { color: #22F; }
 
+/* Around me results */
+#nearby div.content { padding: 0px 5px 5px 5px; }
+#nearby { display: block; }
+#nearby td.station-graph { padding: 5px; text-align: left; vertical-align: top; }
+#nearby td.station { padding: 10px 0; vertical-align: top; }
+#nearby p.station-name { font-weight: bold; font-size: 14px; }
+#nearby p.station-info { font-size: 12px; font-weight: normal; }
+#nearby td { padding: 5px 5px 5px 5px; }
+
 /* Map */
 div.ui-layout-center { padding-top: 8px; }
 #map_canvas { width: 100%; height: 100%; }

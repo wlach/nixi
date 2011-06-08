@@ -41,28 +41,6 @@ function init(minLat, minLon, maxLat, maxLon) {
     });   
     $("#nearby-input").autocomplete(autocomplete);
     $("#find-nearby-button").button();
-    $("form#nearby-form").submit(function() {
-	$("#nearby-input").blur();
-	
-	var oldFindButtonVal = $("#find-nearby-button").val();
-
-	$("#find-nearby-button").attr('disabled', 'disabled');
-	$("#find-nearby-button").val("Working...");
-	geocoder.geocode( {'address': $("#nearby-input").val(), 'bounds': bb }, function(results, status) {
-	    $("#find-nearby-button").val(oldFindButtonVal);
-	    $("#find-nearby-button").removeAttr('disabled');
-	    
-	    if (results.length > 0) {
-		var latlng = results[0].geometry.location;
-		locationMarker.setPosition(latlng);
-		locationMarker.setVisible(true);
-		map.setCenter(latlng);
-		map.setZoom(15);	
-	    }
-	});
-
-	return false;
-    });
 
     $("#from-input").autocomplete(autocomplete);
     $("#to-input").autocomplete(autocomplete);    
@@ -80,7 +58,7 @@ function init(minLat, minLon, maxLat, maxLon) {
 	var request = {
             origin: $("#from-input").val(),
             destination: $("#to-input").val(),
-            travelMode: google.maps.DirectionsTravelMode.DRIVING
+            travelMode: google.maps.DirectionsTravelMode.BICYCLING
 	};
 
 	directionsService.route(request, function(response, status) {
@@ -133,11 +111,18 @@ function init(minLat, minLon, maxLat, maxLon) {
 	url: "bikeStations.xml",
 	dataType: "xml",
 	success: function(xml) {
-	    $(xml).find('station').each(function() {
+	    var stations = [];
 
-		var numBikes = parseInt($(this).find('nbBikes').text());
-		var numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
-		
+	    $(xml).find('station').each(function() {
+		var station = {};
+		station.name = $(this).find('name').text();
+		station.id = $(this).find('terminalName').text();
+		station.numBikes = parseInt($(this).find('nbBikes').text());
+		station.numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
+		station.latlng = new google.maps.LatLng(parseFloat($(this).find('lat').text()),
+							parseFloat($(this).find('long').text()));
+		stations[stations.length] = station;
+
 		function createIcon(numBikes, numEmptyDocks) {
 		    var radius;
 		    var alpha;
@@ -148,7 +133,7 @@ function init(minLat, minLon, maxLat, maxLon) {
 		    } else {
 			radius = (numBikes+numEmptyDocks)/2;
 			if (radius > 20) {
-			    radius = 10;
+			    radius = 20;
 			} else if (radius < 5) {
 			    radius = 5;
 			}
@@ -179,28 +164,139 @@ function init(minLat, minLon, maxLat, maxLon) {
 		    return imageCanvas.toDataURL();
 
 		}
-		var iconURL = createIcon(numBikes, numEmptyDocks);
+		var iconURL = createIcon(station.numBikes, station.numEmptyDocks);
 
-		var position = new google.maps.LatLng($(this).find('lat').text(),
-						      $(this).find('long').text());
-		bixiBounds.extend(position);
-
-		var description = "Bikes: " + numBikes + ' - ' + "Docks: " + numEmptyDocks;
+		bixiBounds.extend(station.latlng);
 
 		var marker = new google.maps.Marker({
-		    position: position, 
+		    position: station.latlng, 
 		    map: map,
 		    icon: iconURL
 		});
 
 		google.maps.event.addListener(marker, 'click', function() {		   
-		    infoWindow.setContent(description);
+		    infoWindow.setContent("<b>" + station.name + 
+					  "</b><br/>Bikes: " + 
+					  station.numBikes + ' - ' + 
+					  "Docks: " + station.numEmptyDocks);
 		    infoWindow.open(map, marker);
 		});
 
 	    });
 
+	    $("form#nearby-form").submit(function() {
+		$("#nearby-input").blur();
+		
+		var oldFindButtonVal = $("#find-nearby-button").val();
+		
+		$("#find-nearby-button").attr('disabled', 'disabled');
+		$("#find-nearby-button").val("Working...");
+		geocoder.geocode( {'address': $("#nearby-input").val(), 'bounds': bb }, function(results, status) {
+		    $("#find-nearby-button").val(oldFindButtonVal);
+		    $("#find-nearby-button").removeAttr('disabled');
+
+		    var nearbyHTML = "";
+		    
+		    if (results.length > 0) {
+			var latlng = results[0].geometry.location;
+			locationMarker.setPosition(latlng);
+			locationMarker.setVisible(true);
+			map.setCenter(latlng);
+			map.setZoom(15);
+			
+			var nearby_stations = stations.map(function(station) { 
+			    var distance = google.maps.geometry.spherical.computeDistanceBetween(latlng, 
+												 station.latlng);
+			    return jQuery.extend({ distance: parseInt(distance) }, station);
+			}).filter(function(station) {
+			    return station.distance < 1000;
+			}).sort(function(station1, station2) {
+			    return station1.distance > station2.distance;
+			}).slice(0,5);
+
+			$('#nearby-content').replaceWith(ich.stations({ 
+			    location: results[0].formatted_address,
+			    stations: nearby_stations }));
+
+			nearby_stations.map(function(station) {
+			    if (station.numBikes == 0 && station.numEmptyDocks == 0) {
+				return;
+			    }
+			    console.log(station.numBikes + "-" + station.numEmptyDocks);
+			    var data = {
+				items: []
+			    };
+			    if (station.numBikes > 0) {
+				data.items[data.items.length] = {label: 'bikes', data: station.numBikes };
+			    }
+			    if (station.numEmptyDocks > 0) {
+				data.items[data.items.length] = {label: 'stations', data: station.numEmptyDocks };
+			    }
+
+			    // Create pie chart
+			    var pieChart = new Bluff.Pie('station-graph-' + station.id, '40x40');
+			    pieChart.set_theme({
+				colors: ['#f00', '#fbb' ],
+				background_colors: ['#fff', '#fff']
+			    });
+	
+			    pieChart.hide_labels_less_than = 100;
+			    pieChart.hide_legend = true;
+			    for (i in data.items) {
+				var item = data.items[i];
+				pieChart.data(item.label, item.data);
+			    }
+
+			    pieChart.draw();
+			});
+		    }
+		});
+		
+		return false;
+	    });
+
 	    map.fitBounds(bixiBounds);
 	}	       
     });
+
+/*
+    var data = {
+	items: [{label: 'bikes', data: 12015},
+		{label: 'stations', data: 124689}]
+    };
+    //Create pie chart
+    var pieChart = new Bluff.Pie('example', '40x40');
+    pieChart.set_theme({
+	colors: ['#f00', '#fbb' ],
+	background_colors: ['#fff', '#fff']
+    });
+	
+    pieChart.hide_labels_less_than = 100;
+    pieChart.hide_legend = true;
+    for (i in data.items) {
+	var item = data.items[i];
+	//Add each data item to pie
+	pieChart.data(item.label, item.data);
+    }
+    //Finally draw the chart
+    pieChart.draw();
+
+
+    //Create pie chart
+    var pieChart = new Bluff.Pie('example', '40x40');
+    pieChart.set_theme({
+	colors: ['#f00', '#fbb' ],
+	background_colors: ['#fff', '#fff']
+    });
+	
+    pieChart.hide_labels_less_than = 100;
+    pieChart.hide_legend = true;
+    for (i in data.items) {
+	var item = data.items[i];
+	//Add each data item to pie
+	pieChart.data(item.label, item.data);
+    }
+    //Finally draw the chart
+    pieChart.draw();
+*/
 }
