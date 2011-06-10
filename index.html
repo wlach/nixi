@@ -26,7 +26,7 @@
     <div id="nearby-content">
       <h2>Stations near {{ location }}</h2>
       {{#stations}}
-      <div class="nearby-station" id="station-{{ id }}">
+      <div class="nearby-station" id="station-{{ id }}" station-id="{{ id }}">
 	<table>
 	  <tr>
 	    <td class="station-graph">
@@ -78,7 +78,7 @@
 
   <div id="header" class="ui-layout-north">
     <h1><a href="/">nixi<span>.ca</span></a></h1>
-    <p>Insert subtitle here</p>
+    <p>Find BIXI stations, faster!</p>
     <div id="nav">
       <select id="city-selector">
 	<option>Montr&eacute;al</option>
@@ -92,7 +92,7 @@
       <div class="panel" id="intro">
 	<div class="content">
 	  <p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at erat sem, ultricies ornare velit. Suspendisse potenti. Sed suscipit dapibus urna in gravida. Nullam blandit aliquam odio quis varius. Integer at orci est. Nullam tincidunt metus id elit lobortis luctus. 
+	    Welcome to nixi.ca, an alternative web interface for the <a href="http://bixi.com">BIXI</a> bike share system.
 	  </p>
 	</div>
       </div>
@@ -159,6 +159,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at erat sem,
 	  </form>
 	</div> 
       </div>
+    </div>
+    <div id="footer">
+      <p>Copyright 2011 <a href="http://masalalabs.ca">William Lachance</a>. nixi.ca is not affiliated in any with BIXI.</a>
     </div>
   </div>
 
