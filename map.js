@@ -294,45 +294,4 @@ function init(minLat, minLon, maxLat, maxLon) {
 	    map.fitBounds(bixiBounds);
 	}	       
     });
-
-/*
-    var data = {
-	items: [{label: 'bikes', data: 12015},
-		{label: 'stations', data: 124689}]
-    };
-    //Create pie chart
-    var pieChart = new Bluff.Pie('example', '40x40');
-    pieChart.set_theme({
-	colors: ['#f00', '#fbb' ],
-	background_colors: ['#fff', '#fff']
-    });
-	
-    pieChart.hide_labels_less_than = 100;
-    pieChart.hide_legend = true;
-    for (i in data.items) {
-	var item = data.items[i];
-	//Add each data item to pie
-	pieChart.data(item.label, item.data);
-    }
-    //Finally draw the chart
-    pieChart.draw();
-
-
-    //Create pie chart
-    var pieChart = new Bluff.Pie('example', '40x40');
-    pieChart.set_theme({
-	colors: ['#f00', '#fbb' ],
-	background_colors: ['#fff', '#fff']
-    });
-	
-    pieChart.hide_labels_less_than = 100;
-    pieChart.hide_legend = true;
-    for (i in data.items) {
-	var item = data.items[i];
-	//Add each data item to pie
-	pieChart.data(item.label, item.data);
-    }
-    //Finally draw the chart
-    pieChart.draw();
-*/
 }
