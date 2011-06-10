@@ -8,8 +8,10 @@ function init(minLat, minLon, maxLat, maxLon) {
     var bikeLayer = new google.maps.BicyclingLayer();
     bikeLayer.setMap(map);    
 
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(map);
+    var directionsDisplay = new google.maps.DirectionsRenderer({ map: map });
+    var walkingDirectionsDisplay = new google.maps.DirectionsRenderer({ markerOptions: { 
+	zIndex: google.maps.Marker.MAX_ZINDEX } });
+
     var directionsService = new google.maps.DirectionsService();
 
     $('body').layout({ defaults: { spacing_open: 0 },
@@ -168,25 +170,26 @@ function init(minLat, minLon, maxLat, maxLon) {
 
 		bixiBounds.extend(station.latlng);
 
-		var marker = new google.maps.Marker({
+		station.marker = new google.maps.Marker({
 		    position: station.latlng, 
 		    map: map,
 		    icon: iconURL
 		});
 
-		google.maps.event.addListener(marker, 'click', function() {		   
+		google.maps.event.addListener(station.marker, 'click', function() {		   
 		    infoWindow.setContent("<b>" + station.name + 
 					  "</b><br/>Bikes: " + 
 					  station.numBikes + ' - ' + 
 					  "Docks: " + station.numEmptyDocks);
-		    infoWindow.open(map, marker);
+		    infoWindow.open(map, station.marker);
 		});
 
 	    });
 
 	    $("form#nearby-form").submit(function() {
 		$("#nearby-input").blur();
-		
+		walkingDirectionsDisplay.setMap(null);
+
 		var oldFindButtonVal = $("#find-nearby-button").val();
 		
 		$("#find-nearby-button").attr('disabled', 'disabled');
@@ -219,6 +222,31 @@ function init(minLat, minLon, maxLat, maxLon) {
 			    stations: nearby_stations }));
 
 			nearby_stations.map(function(station) {
+			    $('#station-' + station.id).hover(function() {
+				$(this).addClass("nearby-station-hover");
+			    }, function() {
+				$(this).removeClass("nearby-station-hover");
+			    }).click(function() {
+				$('.nearby-station').removeClass("nearby-station-selected");
+				$(this).addClass("nearby-station-selected");
+				directionsService.route({
+				    origin: latlng,
+				    destination: station.latlng,
+				    travelMode: google.maps.DirectionsTravelMode.WALKING
+				}, function(response, status) {
+				    if (status == google.maps.DirectionsStatus.OK) {
+					locationMarker.setVisible(false);
+					walkingDirectionsDisplay.setDirections(response);
+					walkingDirectionsDisplay.setMap(map);
+				    } else {
+					console.log("Error processing directions to station!");
+				    }
+				});
+
+			    });
+
+			    // Create pie chart
+
 			    if (station.numBikes == 0 && station.numEmptyDocks == 0) {
 				return;
 			    }
@@ -233,11 +261,10 @@ function init(minLat, minLon, maxLat, maxLon) {
 				data.items[data.items.length] = {label: 'stations', data: station.numEmptyDocks };
 			    }
 
-			    // Create pie chart
 			    var pieChart = new Bluff.Pie('station-graph-' + station.id, '40x40');
 			    pieChart.set_theme({
 				colors: ['#f00', '#fbb' ],
-				background_colors: ['#fff', '#fff']
+				background_colors: ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
 			    });
 	
 			    pieChart.hide_labels_less_than = 100;

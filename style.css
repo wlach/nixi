@@ -64,6 +64,8 @@ div.ui-layout-west { overflow: auto; padding-top: 8px; }
 /* Around me results */
 #nearby div.content { padding: 0px 5px 5px 5px; }
 #nearby { display: block; }
+#nearby div.nearby-station-hover { background: #EAEDFF; cursor: pointer; }
+#nearby div.nearby-station-selected { background: #D9DCFF; }
 #nearby td.station-graph { padding: 5px; text-align: left; vertical-align: top; }
 #nearby td.station { padding: 10px 0; vertical-align: top; }
 #nearby p.station-name { font-weight: bold; font-size: 14px; }
