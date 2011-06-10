@@ -254,18 +254,27 @@ function init(minLat, minLon, maxLat, maxLon) {
 			    var data = {
 				items: []
 			    };
+
 			    if (station.numBikes > 0) {
 				data.items[data.items.length] = {label: 'bikes', data: station.numBikes };
+			    } else {
 			    }
 			    if (station.numEmptyDocks > 0) {
 				data.items[data.items.length] = {label: 'stations', data: station.numEmptyDocks };
 			    }
 
 			    var pieChart = new Bluff.Pie('station-graph-' + station.id, '40x40');
-			    pieChart.set_theme({
-				colors: ['#f00', '#fbb' ],
-				background_colors: ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
-			    });
+			    if (station.numBikes == 0) {
+				pieChart.set_theme({
+				    colors: ['#fbb' ],
+				    background_colors: ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
+				});
+			    } else {
+				pieChart.set_theme({
+				    colors: ['#f00', '#fbb' ],
+				    background_colors: ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
+				});
+			    }
 	
 			    pieChart.hide_labels_less_than = 100;
 			    pieChart.hide_legend = true;
