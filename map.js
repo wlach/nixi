@@ -1,4 +1,5 @@
 function init(minLat, minLon, maxLat, maxLon) {
+
     var bb = new google.maps.LatLngBounds(new google.maps.LatLng(minLat, minLon),
 					  new google.maps.LatLng(maxLat, maxLon));
     var map = new google.maps.Map(document.getElementById("map_canvas"), { zoom: 1, 
