@@ -118,8 +118,6 @@ function updateCity(cityIndex) {
 		    $("#find-nearby-button").val(oldFindButtonVal);
 		    $("#find-nearby-button").removeAttr('disabled');
 
-		    var nearbyHTML = "";
-		    
 		    if (results.length > 0) {
 			var latlng = results[0].geometry.location;
 			locationMarker.setPosition(latlng);
