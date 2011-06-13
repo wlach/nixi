@@ -11,7 +11,7 @@ var cities = [
       url: "bikeStations-toronto.xml"
     },
     { name: "Ottawa",
-      url: "bikeStations-ottawa.xml"
+      url: "bikeStations-capital.xml"
     } 
 ];
 	       
