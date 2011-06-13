@@ -234,6 +234,7 @@ function updateCity(cityIndex) {
 }
 
 function init() {
+
     for (var i in cities) {
 	$("#city-selector").append('<option value= ' + i + '>' + cities[i].name + '</option>');
     }
@@ -330,6 +331,8 @@ function init() {
     if (cityIndex == undefined) {
 	cityIndex = 0;
     }
-    
+    $("select#city-selector option[value=" + cityIndex + "]").attr("selected", 
+								   "selected");
+
     updateCity(parseInt(cityIndex)); // set city to default
 }
