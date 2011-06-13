@@ -1,107 +1,26 @@
-function init(minLat, minLon, maxLat, maxLon) {
+var map;
+var directionsService;
+var bikingDirectionsDisplay;
+var walkingDirectionsDisplay;
 
-    var bb = new google.maps.LatLngBounds(new google.maps.LatLng(minLat, minLon),
-					  new google.maps.LatLng(maxLat, maxLon));
-    var map = new google.maps.Map(document.getElementById("map_canvas"), { zoom: 1, 
-									   mapTypeId: google.maps.MapTypeId.ROADMAP,
-									   center: bb.getCenter() });
+var cities = [ 
+    { name: "Montr&eacute;al",
+      url: "bikeStations-montreal.xml"
+    },
+    { name: "Toronto",
+      url: "bikeStations-toronto.xml"
+    },
+    { name: "Ottawa",
+      url: "bikeStations-ottawa.xml"
+    } 
+];
+	       
+var bixiStations = [];
+var locationMarker;
 
-    var bikeLayer = new google.maps.BicyclingLayer();
-    bikeLayer.setMap(map);    
-
-    var directionsDisplay = new google.maps.DirectionsRenderer({ map: map });
-    var walkingDirectionsDisplay = new google.maps.DirectionsRenderer({ markerOptions: { 
-	zIndex: google.maps.Marker.MAX_ZINDEX } });
-
-    var directionsService = new google.maps.DirectionsService();
-
-    $('body').layout({ defaults: { spacing_open: 0 },
-                       applyDefaultStyles: true,
-                       west: { size: 320 },
-                       north: { innerHeight: 30 },
-                       center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
-    map.fitBounds(bb);
-    
-    var placeService = new google.maps.places.PlacesService(map);
-
-    var geocoder = new google.maps.Geocoder();
-    var autocomplete = {
-      //This bit uses the geocoder to fetch address values
-      source: function(request, response) {
-          geocoder.geocode( {'address': request.term, 'bounds': bb }, function(results, status) {
-          response($.map(results, function(item) {
-            return {
-              label: item.formatted_address,
-              value: item.formatted_address,
-            }
-          }));
-	  })},
-    }
-    
-    var locationMarker = new google.maps.Marker({
-	map: map,
-	visible: false
-    });   
-    $("#nearby-input").autocomplete(autocomplete);
-    $("#find-nearby-button").button();
-
-    $("#from-input").autocomplete(autocomplete);
-    $("#to-input").autocomplete(autocomplete);    
-    $("#plan-button").button();
-    $("form#directions-form").submit(function() {
-	$('#error-widget').hide();
-	$('#from-input').blur();
-	$('#to-input').blur();
-
-	var oldPlanButtonVal = $("#plan-button").val();
-	
-	$("#plan-button").attr('disabled', 'disabled');
-	$("#plan-button").val("Working...");
-
-	var request = {
-            origin: $("#from-input").val(),
-            destination: $("#to-input").val(),
-            travelMode: google.maps.DirectionsTravelMode.BICYCLING
-	};
-
-	directionsService.route(request, function(response, status) {
-	    $("#plan-button").removeAttr('disabled');
-	    $("#plan-button").val(oldPlanButtonVal);
-
-	    if (status == google.maps.DirectionsStatus.OK) {
-		directionsDisplay.setDirections(response);
-	    } else {
-		$('#error-widget').show();
-		console.log("Error processing directions!");
-	    }
-	});
-
-	return false;
-    });
-
-    $("#tab-selector").buttonset();
-    $('input#trip-planner').click(function()  {
-	$('div#nearby-panel').hide();
-	$('div#trip-planner-panel').show();
-    });
-
-    $('input#find-nearby').click(function() {
-	$('div#nearby-panel').show();
-	$('div#trip-planner-panel').hide();
-    });
-
-    $("#reverse-button").button({
-	text: false, 
-	icons: {
-	    primary: 'ui-icon-shuffle'
-	}
-    }).click(function() {
-	var fromval = $("#from-input").val();
-	$("#from-input").val($("#to-input").val());
-	$("#to-input").val(fromval);
-    });    
-
+function updateCity(cityIndex) {
     var imageCanvas = document.createElement("canvas");
+    var geocoder = new google.maps.Geocoder();
 
     var bixiBounds = new google.maps.LatLngBounds();
     var infoWindow = new google.maps.InfoWindow();
@@ -111,11 +30,9 @@ function init(minLat, minLon, maxLat, maxLon) {
 
     $.ajax({
         type: "GET",
-	url: "bikeStations.xml",
+	url: cities[cityIndex].url,
 	dataType: "xml",
 	success: function(xml) {
-	    var stations = [];
-
 	    $(xml).find('station').each(function() {
 		var station = {};
 		station.name = $(this).find('name').text();
@@ -124,7 +41,7 @@ function init(minLat, minLon, maxLat, maxLon) {
 		station.numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
 		station.latlng = new google.maps.LatLng(parseFloat($(this).find('lat').text()),
 							parseFloat($(this).find('long').text()));
-		stations[stations.length] = station;
+		bixiStations[bixiStations.length] = station;
 
 		function createIcon(numBikes, numEmptyDocks) {
 		    var radius;
@@ -190,12 +107,12 @@ function init(minLat, minLon, maxLat, maxLon) {
 	    $("form#nearby-form").submit(function() {
 		$("#nearby-input").blur();
 		walkingDirectionsDisplay.setMap(null);
-
+		
 		var oldFindButtonVal = $("#find-nearby-button").val();
 		
 		$("#find-nearby-button").attr('disabled', 'disabled');
 		$("#find-nearby-button").val("Working...");
-		geocoder.geocode( {'address': $("#nearby-input").val(), 'bounds': bb }, function(results, status) {
+		geocoder.geocode( {'address': $("#nearby-input").val(), 'bounds': bixiBounds }, function(results, status) {
 		    $("#find-nearby-button").val(oldFindButtonVal);
 		    $("#find-nearby-button").removeAttr('disabled');
 
@@ -208,7 +125,7 @@ function init(minLat, minLon, maxLat, maxLon) {
 			map.setCenter(latlng);
 			map.setZoom(15);
 			
-			var nearby_stations = stations.map(function(station) { 
+			var nearby_stations = bixiStations.map(function(station) { 
 			    var distance = google.maps.geometry.spherical.computeDistanceBetween(latlng, 
 												 station.latlng);
 			    return jQuery.extend({ distance: parseInt(distance) }, station);
@@ -290,9 +207,129 @@ function init(minLat, minLon, maxLat, maxLon) {
 		});
 		
 		return false;
-	    });
+	    });	   
 
+	    var autocomplete = {
+		//This bit uses the geocoder to fetch address values
+		source: function(request, response) {
+		    geocoder.geocode( {'address': request.term, 'bounds': bixiBounds }, function(results, status) {
+			response($.map(results, function(item) {
+			    return {
+				label: item.formatted_address,
+				value: item.formatted_address,
+			    }
+			}));
+		    })},
+	    }
+
+	    $("#nearby-input").autocomplete(autocomplete);
+	    $("#from-input").autocomplete(autocomplete);
+	    $("#to-input").autocomplete(autocomplete);	    
+
+	    $('#map_canvas').show();
+	    google.maps.event.trigger(map, "resize");
 	    map.fitBounds(bixiBounds);
 	}	       
     });
+}
+
+function init() {
+    for (var i in cities) {
+	$("#city-selector").append('<option value= ' + i + '>' + cities[i].name + '</option>');
+    }
+
+    map = new google.maps.Map(document.getElementById("map_canvas"), {
+	zoom: 1, 
+	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	center: new google.maps.LatLng(45.64, -73.4) 
+    });
+    var bikeLayer = new google.maps.BicyclingLayer();
+    bikeLayer.setMap(map);    
+
+    $('body').layout({ defaults: { spacing_open: 0 },
+                       applyDefaultStyles: true,
+                       west: { size: 320 },
+                       north: { innerHeight: 30 },
+                       center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
+
+    bikingDirectionsDisplay = new google.maps.DirectionsRenderer({ map: map });
+    walkingDirectionsDisplay = new google.maps.DirectionsRenderer({ markerOptions: { 
+	zIndex: google.maps.Marker.MAX_ZINDEX } });
+    directionsService = new google.maps.DirectionsService();
+
+    locationMarker = new google.maps.Marker({
+	map: map,
+	visible: false
+    });   
+
+    $("#find-nearby-button").button();
+    $("#plan-button").button();
+    $("form#directions-form").submit(function() {
+	$('#error-widget').hide();
+	$('#from-input').blur();
+	$('#to-input').blur();
+
+	var oldPlanButtonVal = $("#plan-button").val();
+	
+	$("#plan-button").attr('disabled', 'disabled');
+	$("#plan-button").val("Working...");
+
+	var request = {
+            origin: $("#from-input").val(),
+            destination: $("#to-input").val(),
+            travelMode: google.maps.DirectionsTravelMode.BICYCLING
+	};
+
+	directionsService.route(request, function(response, status) {
+	    $("#plan-button").removeAttr('disabled');
+	    $("#plan-button").val(oldPlanButtonVal);
+
+	    if (status == google.maps.DirectionsStatus.OK) {
+		bikingDirectionsDisplay.setDirections(response);
+	    } else {
+		$('#error-widget').show();
+		console.log("Error processing directions!");
+	    }
+	});
+
+	return false;
+    });
+
+    $("#tab-selector").buttonset();
+    $('input#trip-planner').click(function()  {
+	$('div#nearby-panel').hide();
+	$('div#trip-planner-panel').show();
+    });
+
+    $('input#find-nearby').click(function() {
+	$('div#nearby-panel').show();
+	$('div#trip-planner-panel').hide();
+    });
+
+    $("#reverse-button").button({
+	text: false, 
+	icons: {
+	    primary: 'ui-icon-shuffle'
+	}
+    }).click(function() {
+	var fromval = $("#from-input").val();
+	$("#from-input").val($("#to-input").val());
+	$("#to-input").val(fromval);
+    });    
+
+    $("#city-selector").change(function() {
+	var cityIndex = $("#city-selector").val();
+	updateCity(cityIndex);
+	localStorage["defaultCityIndex"] = cityIndex;
+    });
+
+    // get city preference from user and update to it. you might think it
+    // would make sense to use geolocation for this, but that's actually
+    // kinda slow at least with Firefox
+    var cityIndex = localStorage["defaultCityIndex"];
+    if (cityIndex == undefined) {
+	cityIndex = 0;
+    }
+    
+    updateCity(parseInt(cityIndex)); // set city to default
 }

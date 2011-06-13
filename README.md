@@ -24,15 +24,18 @@ nixi.ca server.
 
     #!/bin/sh
     
-    BASEURL=https://montreal.bixi.com/data
-    
     cd $HOME/Sites/nixi
-    curl -q -O $BASEURL/bikeStations.xml
+    
+    for CITY in montreal toronto ottawa; do
+        BASEURL=https://$CITY.bixi.com/data
+    
+        curl -q $BASEURL/bikeStations.xml > bikeStations-$CITY.xml
+    done
 
 # Credits / Acknowledgements
 
-* Bike image / icon by John Cliff (http://www.openclipart.org/detail/28067)
 * Base stylesheet originally by Francis Wu (http://thisisfranciswu.com/)
+* Bike image / icon by John Cliff (http://www.openclipart.org/detail/28067)
 * Graphs generated using Bluff library (http://bluff.jcoglan.com/)
 * Templating done using the ICanHaz library (http://icanhazjs.com/)
 * Layout is generated using UI.Layout (http://layout.jquery-dev.net/)
