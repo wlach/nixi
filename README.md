@@ -1,5 +1,9 @@
+# About
+
 This is the source to the "nixi" website, which aims to offer a better web-based
 interface to the BIXI web site.
+
+# How to configure
 
 Note that this project uses git submodules to import the Aristo theme. After
 cloning you'll want to do this on the command line:
@@ -10,7 +14,7 @@ cloning you'll want to do this on the command line:
 If you want to develop/test nixi offline, you can do so by loading 
 "index.html" in your web browser. Note that Chrome refuses to generate
 marker images locally for some reason that I haven't determined yet 
-(everything works fine in Firefox)
+(everything works fine in Firefox).
 
 Due to the same origin policy enforced by web browsers, bike station
 information needs to be served up from the same server as that of the main
@@ -25,5 +29,11 @@ nixi.ca server.
     cd $HOME/Sites/nixi
     curl -q -O $BASEURL/bikeStations.xml
 
+# Credits / Acknowledgements
 
+* Bike image / icon by John Cliff (http://www.openclipart.org/detail/28067)
+* Base stylesheet originally by Francis Wu (http://thisisfranciswu.com/)
+* Graphs generated using Bluff library (http://bluff.jcoglan.com/)
+* Templating done using the ICanHaz library (http://icanhazjs.com/)
+* Layout is generated using UI.Layout (http://layout.jquery-dev.net/)
 
