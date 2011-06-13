@@ -55,7 +55,7 @@ function updateCity(cityIndex) {
 			if (radius > 20) {
 			    radius = 20;
 			} else if (radius < 5) {
-			    radius = 5;
+			    radius = 8;
 			}
 
 			alpha = numBikes / (numBikes+numEmptyDocks);
@@ -105,6 +105,8 @@ function updateCity(cityIndex) {
 	    });
 
 	    $("form#nearby-form").submit(function() {
+		$("#city-hint-widget").hide();
+
 		$("#nearby-input").blur();
 		walkingDirectionsDisplay.setMap(null);
 		
@@ -319,6 +321,8 @@ function init() {
     });    
 
     $("#city-selector").change(function() {
+	$("#city-hint-widget").hide();
+
 	var cityIndex = $("#city-selector").val();
 	updateCity(cityIndex);
 	localStorage["defaultCityIndex"] = cityIndex;
@@ -330,6 +334,7 @@ function init() {
     var cityIndex = localStorage["defaultCityIndex"];
     if (cityIndex == undefined) {
 	cityIndex = 0;
+	$("#city-hint-widget").show();
     }
     $("select#city-selector option[value=" + cityIndex + "]").attr("selected", 
 								   "selected");

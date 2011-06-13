@@ -26,6 +26,9 @@ div.ui-layout-west { overflow: auto; padding-top: 8px; }
 #panels div.content { padding: 12px; }
 #panels div.content p { margin: auto; }
 
+/* Info */
+#city-hint-widget { display: none; }
+
 /* Error display */
 #error-widget { display: none; }
 
