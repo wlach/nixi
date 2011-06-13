@@ -26,7 +26,7 @@ nixi.ca server.
     
     cd $HOME/Sites/nixi
     
-    for CITY in montreal toronto ottawa; do
+    for CITY in montreal toronto capital; do
         BASEURL=https://$CITY.bixi.com/data
     
         curl -q $BASEURL/bikeStations.xml > bikeStations-$CITY.xml
