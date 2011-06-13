@@ -135,8 +135,9 @@ function updateCity(cityIndex) {
 			    return station1.distance > station2.distance;
 			}).slice(0,5);
 
+			document.title = "Stations near " + results[0].formatted_address;
 			$('#nearby-content').replaceWith(ich.stations({ 
-			    location: results[0].formatted_address,
+			    title: document.title,
 			    stations: nearby_stations }));
 
 			nearby_stations.map(function(station) {
