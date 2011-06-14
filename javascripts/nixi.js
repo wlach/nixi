@@ -18,8 +18,53 @@ var cities = [
 var bixiStations = [];
 var locationMarker;
 
+function createIcon(numBikes, numEmptyDocks) {
+    var imageCanvas, context;
+    var radius;
+    var alpha;
+    if (numBikes == 0 && numEmptyDocks == 0) {
+	// edge case: station with nothing in it
+	radius = 5;
+	alpha = 0.0;
+    } else {
+	radius = (numBikes+numEmptyDocks)/2;
+	if (radius > 20) {
+	    radius = 20;
+	} else if (radius < 5) {
+	    radius = 8;
+	}
+	
+	alpha = numBikes / (numBikes+numEmptyDocks);
+	if (alpha > 0.5 && alpha < 1.0) {
+	    alpha=0.5;
+	} else if (alpha < 0.1 && alpha > 0.0) {
+	    alpha = 0.1;
+	}
+    }
+    
+    imageCanvas = document.createElement("canvas");
+    context = imageCanvas.getContext("2d");
+
+    imageCanvas.width = radius*2+4;
+    imageCanvas.height = radius*2+4;
+    
+    context.clearRect(0,0,radius*2, radius*2);
+    
+    context.fillStyle = "rgba(255,0,0," + alpha + ")";
+    context.beginPath();
+    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
+    context.fill();
+    
+    context.strokeStyle = "#f00";
+    context.beginPath();
+    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
+    context.stroke();
+    
+    return imageCanvas.toDataURL();
+}
+
+
 function updateCity(cityIndex) {
-    var imageCanvas = document.createElement("canvas");
     var geocoder = new google.maps.Geocoder();
 
     var bixiBounds = new google.maps.LatLngBounds();
@@ -34,74 +79,32 @@ function updateCity(cityIndex) {
 	dataType: "xml",
 	success: function(xml) {
 	    $(xml).find('station').each(function() {
-		var station = {};
-		station.name = $(this).find('name').text();
-		station.id = $(this).find('terminalName').text();
-		station.numBikes = parseInt($(this).find('nbBikes').text());
-		station.numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
-		station.latlng = new google.maps.LatLng(parseFloat($(this).find('lat').text()),
-							parseFloat($(this).find('long').text()));
-		bixiStations[bixiStations.length] = station;
-
-		function createIcon(numBikes, numEmptyDocks) {
-		    var radius;
-		    var alpha;
-		    if (numBikes == 0 && numEmptyDocks == 0) {
-			// edge case: station with nothing in it
-			radius = 5;
-			alpha = 0.0;
-		    } else {
-			radius = (numBikes+numEmptyDocks)/2;
-			if (radius > 20) {
-			    radius = 20;
-			} else if (radius < 5) {
-			    radius = 8;
-			}
-
-			alpha = numBikes / (numBikes+numEmptyDocks);
-			if (alpha > 0.5 && alpha < 1.0) {
-			    alpha=0.5;
-			} else if (alpha < 0.1 && alpha > 0.0) {
-			    alpha = 0.1;
-			}
-		    }
-		    imageCanvas.width = radius*2+4;
-		    imageCanvas.height = radius*2+4;
-		    var context = imageCanvas.getContext("2d");
+		if ($(this).find('installed').text() !== "false") {
+		    var station = {};
+		    station.name = $(this).find('name').text();
+		    station.id = $(this).find('terminalName').text();
+		    station.numBikes = parseInt($(this).find('nbBikes').text());
+		    station.numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
+		    station.latlng = new google.maps.LatLng(parseFloat($(this).find('lat').text()),
+							    parseFloat($(this).find('long').text()));
+		    bixiStations[bixiStations.length] = station;
 		    
-		    context.clearRect(0,0,radius*2, radius*2);
+		    bixiBounds.extend(station.latlng);
+
+		    station.marker = new google.maps.Marker({
+			position: station.latlng, 
+			map: map,
+			icon: createIcon(station.numBikes, station.numEmptyDocks)
+		    });
 		    
-		    context.fillStyle = "rgba(255,0,0," + alpha + ")";
-		    context.beginPath();
-		    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
-		    context.fill();
-
-		    context.strokeStyle = "#f00";
-		    context.beginPath();
-		    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
-		    context.stroke();
-
-		    return imageCanvas.toDataURL();
-
+		    google.maps.event.addListener(station.marker, 'click', function() {		   
+			infoWindow.setContent("<b>" + station.name + 
+					      "</b><br/>Bikes: " + 
+					      station.numBikes + ' - ' + 
+					      "Docks: " + station.numEmptyDocks);
+			infoWindow.open(map, station.marker);
+		    });
 		}
-		var iconURL = createIcon(station.numBikes, station.numEmptyDocks);
-
-		bixiBounds.extend(station.latlng);
-
-		station.marker = new google.maps.Marker({
-		    position: station.latlng, 
-		    map: map,
-		    icon: iconURL
-		});
-
-		google.maps.event.addListener(station.marker, 'click', function() {		   
-		    infoWindow.setContent("<b>" + station.name + 
-					  "</b><br/>Bikes: " + 
-					  station.numBikes + ' - ' + 
-					  "Docks: " + station.numEmptyDocks);
-		    infoWindow.open(map, station.marker);
-		});
-
 	    });
 
 	    $("form#nearby-form").submit(function() {
