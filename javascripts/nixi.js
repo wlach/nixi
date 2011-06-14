@@ -110,7 +110,7 @@ function updateCity(cityIndex) {
 	    $("form#nearby-form").unbind();
 	    $("form#nearby-form").submit(function() {
 		$("#city-hint-widget").hide();
-		$("#nearby-error-widget").hide();
+		$("#nearby-error-widget").remove();
 		$("#nearby").hide();
 
 		$("#nearby-input").blur();
@@ -213,7 +213,11 @@ function updateCity(cityIndex) {
 
 			$("#nearby").show();
 		    } else {
-			$("#nearby-error-widget").show();
+			
+			$("#nearby-panel div.content").prepend(ich.error_widget({
+			    id: "nearby-error-widget",
+			    description: "Unable to find location. Please make sure you are connected to the Internet and double check the wording."
+			}));
 		    }
 		});
 		
@@ -331,7 +335,7 @@ function init() {
 
     $("#city-selector").change(function() {
 	$("#city-hint-widget").hide();
-	$("#nearby-error-widget").hide();
+	$("#nearby-error-widget").remove();
 	$("#nearby").hide();	
 	$("#nearby-input").val("");
 

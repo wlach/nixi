@@ -29,9 +29,6 @@ div.ui-layout-west { overflow: auto; padding-top: 8px; }
 /* Info */
 #city-hint-widget { display: none; }
 
-/* Error display */
-#nearby-error-widget { display: none; }
-
 /* Selector */
 #panels #tab-selector { margin: auto; margin-left: auto; margin-right: auto; text-align: center; height: 40px; }
 
