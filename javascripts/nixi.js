@@ -109,6 +109,8 @@ function updateCity(cityIndex) {
 
 	    $("form#nearby-form").submit(function() {
 		$("#city-hint-widget").hide();
+		$("#nearby-error-widget").hide();
+		$("#nearby").hide();
 
 		$("#nearby-input").blur();
 		walkingDirectionsDisplay.setMap(null);
@@ -207,6 +209,10 @@ function updateCity(cityIndex) {
 
 			    pieChart.draw();
 			});
+
+			$("#nearby").show();
+		    } else {
+			$("#nearby-error-widget").show();
 		    }
 		});
 		

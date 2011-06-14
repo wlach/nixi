@@ -30,7 +30,7 @@ div.ui-layout-west { overflow: auto; padding-top: 8px; }
 #city-hint-widget { display: none; }
 
 /* Error display */
-#error-widget { display: none; }
+#nearby-error-widget { display: none; }
 
 /* Selector */
 #panels #tab-selector { margin: auto; margin-left: auto; margin-right: auto; text-align: center; height: 40px; }
