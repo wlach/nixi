@@ -260,11 +260,6 @@ function updateCity(cityIndex) {
 }
 
 function init() {
-
-    for (var i in cities) {
-	$("#city-selector").append('<option value= ' + i + '>' + cities[i].name + '</option>');
-    }
-
     map = new google.maps.Map(document.getElementById("map_canvas"), {
 	zoom: 1, 
 	mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -278,6 +273,23 @@ function init() {
                        west: { size: 320 },
                        north: { innerHeight: 30 },
                        center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
+
+    if (!Modernizr.canvas ||
+	!Modernizr.localstorage) {
+	$('#intro-content p').hide();
+	$("#intro-content").prepend(ich.error_widget({
+	    id: "unsupported-error-widget",
+	    description: "Nixi currently requires a browser that supports advanced HTML5 features. If you can, please upgrade to a modern browser like <a href=\"http://www.mozilla.com/firefox/fx/\">Mozilla Firefox</a> or <a href=\"http://www.google.com/chrome\">Google Chrome</a>. If you can't, sorry. :-("
+	}));
+
+	$('#nearby-panel').hide();
+	$('#city-selector').hide();
+	return;
+    }
+
+    for (var i in cities) {
+	$("#city-selector").append('<option value= ' + i + '>' + cities[i].name + '</option>');
+    }
 
     bikingDirectionsDisplay = new google.maps.DirectionsRenderer({ map: map });
     walkingDirectionsDisplay = new google.maps.DirectionsRenderer({ markerOptions: { 

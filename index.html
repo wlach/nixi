@@ -12,7 +12,7 @@
   <link href="aristo-jquery-theme/css/Aristo/jquery-ui-1.8.7.custom.css" rel="stylesheet" />
 
   <link rel="icon" href="images/nixi-favico.png"/>
-
+  <script src="javascripts/modernizr-min.js"></script>
  </head>
 
 <body>
@@ -29,7 +29,7 @@
   <div class="ui-layout-west">
     <div id="panels">
       <div class="panel" id="intro">
-	<div class="content">
+	<div class="content" id="intro-content">
 	  <p>
 	    Welcome to nixi.ca, an alternative web interface for the <a href="http://bixi.com">BIXI</a> bike share system.
 	  </p>
@@ -159,7 +159,7 @@
     <div class="ui-widget" style="padding: 8px 0px;" id="{{ id }}">
       <div class="ui-state-error ui-corner-all" style="padding: 8px;">
 	<p id="error-description"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .7em;"></span>
-	  <strong>Error:</strong> {{ description }}</p>
+	  <strong>Error:</strong> {{{ description }}}</p>
       </div>
     </div>
   </script>
