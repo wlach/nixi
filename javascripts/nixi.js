@@ -138,7 +138,7 @@ function updateCity(cityIndex) {
 			}).filter(function(station) {
 			    return station.distance < 1000;
 			}).sort(function(station1, station2) {
-			    return station1.distance > station2.distance;
+			    return station1.distance - station2.distance;
 			}).slice(0,5);
 
 			if (nearby_stations.length === 0) {
