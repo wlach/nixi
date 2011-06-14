@@ -330,6 +330,9 @@ function init() {
 
     $("#city-selector").change(function() {
 	$("#city-hint-widget").hide();
+	$("#nearby-error-widget").hide();
+	$("#nearby").hide();	
+	$("#nearby-input").val("");
 
 	var cityIndex = $("#city-selector").val();
 	updateCity(cityIndex);
