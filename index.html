@@ -13,27 +13,6 @@
 
   <link rel="icon" href="images/nixi-favico.png"/>
   
-  <script id="stations" type="text/html">
-    <div id="nearby-content">
-      <h2>{{ title }}</h2>
-      {{#stations}}
-      <div class="nearby-station" id="station-{{ id }}" station-id="{{ id }}">
-	<table>
-	  <tr>
-	    <td class="station-graph">
-	    <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
-	    </td>
-	  <td class="station">
-	    <p class="station-name">{{ name }}</p>
-	    <p class="station-info">Distance: {{ distance }}m - Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</p>
-	  </td>
-	  </tr>
-	</table>
-      </div>
-      {{/stations}}
-    </div>
-  </script>
-
  </head>
 
 <body>
@@ -165,6 +144,27 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
      })();
 
+  </script>
+
+  <script id="stations" type="text/html">
+    <div id="nearby-content">
+      <h2>{{ title }}</h2>
+      {{#stations}}
+      <div class="nearby-station" id="station-{{ id }}" station-id="{{ id }}">
+	<table>
+	  <tr>
+	    <td class="station-graph">
+	    <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
+	    </td>
+	  <td class="station">
+	    <p class="station-name">{{ name }}</p>
+	    <p class="station-info">Distance: {{ distance }}m - Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</p>
+	  </td>
+	  </tr>
+	</table>
+      </div>
+      {{/stations}}
+    </div>
   </script>
 </body>
 
