@@ -141,6 +141,17 @@ function updateCity(cityIndex) {
 			    return station1.distance > station2.distance;
 			}).slice(0,5);
 
+			if (nearby_stations.length === 0) {
+			    document.title = "No stations within 1000 meters of location. :-(";
+
+			    $("#nearby-panel div.content").prepend(ich.error_widget({
+				id: "nearby-error-widget",
+				description: document.title
+			    }));
+
+			    return false;
+			}
+
 			document.title = "Stations near " + results[0].formatted_address;
 			$('#nearby-content').replaceWith(ich.stations({ 
 			    title: document.title,
