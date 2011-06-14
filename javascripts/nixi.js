@@ -107,6 +107,7 @@ function updateCity(cityIndex) {
 		}
 	    });
 
+	    $("form#nearby-form").unbind();
 	    $("form#nearby-form").submit(function() {
 		$("#city-hint-widget").hide();
 		$("#nearby-error-widget").hide();
