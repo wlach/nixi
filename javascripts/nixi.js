@@ -239,7 +239,9 @@ function updateCity(cityIndex) {
 		//This bit uses the geocoder to fetch address values
 		source: function(request, response) {
 		    geocoder.geocode( {'address': request.term, 'bounds': bixiBounds }, function(results, status) {
-			response($.map(results, function(item) {
+			response($.map(results.filter(function(item) {
+			    return bixiBounds.contains(item.geometry.location);
+			}), function(item) {
 			    return {
 				label: item.formatted_address,
 				value: item.formatted_address,
