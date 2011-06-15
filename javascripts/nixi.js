@@ -260,19 +260,19 @@ function updateCity(cityIndex) {
 }
 
 function init() {
+    $('body').layout({ defaults: { spacing_open: 0 },
+                       applyDefaultStyles: true,
+                       west: { size: 320 },
+                       north: { innerHeight: 30 },
+                       center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
+
     map = new google.maps.Map(document.getElementById("map_canvas"), {
 	zoom: 1, 
 	mapTypeId: google.maps.MapTypeId.ROADMAP,
 	center: new google.maps.LatLng(45.64, -73.4) 
     });
     var bikeLayer = new google.maps.BicyclingLayer();
-    bikeLayer.setMap(map);    
-
-    $('body').layout({ defaults: { spacing_open: 0 },
-                       applyDefaultStyles: true,
-                       west: { size: 320 },
-                       north: { innerHeight: 30 },
-                       center: { onresize_end: function () { google.maps.event.trigger(map, "resize"); } } });
+    bikeLayer.setMap(map);
 
     if (!Modernizr.canvas ||
 	!Modernizr.localstorage) {
