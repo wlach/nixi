@@ -109,6 +109,8 @@ function updateCity(cityIndex) {
 
 	    $("form#nearby-form").unbind();
 	    $("form#nearby-form").submit(function() {
+		_gaq.push(['_trackPageview', '/find-nearby']);
+
 		$("#city-hint-widget").hide();
 		$("#nearby-error-widget").remove();
 		$("#nearby").hide();
