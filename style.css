@@ -82,3 +82,5 @@ div.ui-layout-center { padding-top: 8px; }
 
 /* Footer */
 #footer p { font-size: 12px; color: #000000; padding: 10px; margin: 0 0 10px; }
+/* The following disables the stupid comment box in the facebook "like" button */
+.fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_ltr { display: none !important;}
