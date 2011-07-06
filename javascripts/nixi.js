@@ -5,13 +5,13 @@ var walkingDirectionsDisplay;
 
 var cities = [ 
     { name: "Montr&eacute;al",
-      url: "bikeStations-montreal.xml"
+      url: "bikeStations-montreal.json"
     },
     { name: "Toronto",
-      url: "bikeStations-toronto.xml"
+      url: "bikeStations-toronto.json"
     },
     { name: "Ottawa",
-      url: "bikeStations-capital.xml"
+      url: "bikeStations-capital.json"
     } 
 ];
 	       
@@ -76,27 +76,25 @@ function updateCity(cityIndex) {
     $.ajax({
         type: "GET",
 	url: cities[cityIndex].url,
-	dataType: "xml",
-	success: function(xml) {
-	    $(xml).find('station').each(function() {
-		if ($(this).find('installed').text() !== "false") {
-		    var station = {};
-		    station.name = $(this).find('name').text();
-		    station.id = $(this).find('terminalName').text();
-		    station.numBikes = parseInt($(this).find('nbBikes').text());
-		    station.numEmptyDocks = parseInt($(this).find('nbEmptyDocks').text());
-		    station.latlng = new google.maps.LatLng(parseFloat($(this).find('lat').text()),
-							    parseFloat($(this).find('long').text()));
-		    bixiStations[bixiStations.length] = station;
-		    
-		    bixiBounds.extend(station.latlng);
-
+	dataType: "json",
+	success: function(json) {
+	    json.stations.forEach(function(stationJson, i, a) {
+		if (stationJson.installed) {
+		    var station = {
+			name: stationJson.name,			 
+			numBikes: stationJson.nbBikes,
+			numEmptyDocks: stationJson.nbEmptyDocks,
+			latlng: new google.maps.LatLng(stationJson.lat, 
+						       stationJson.long),
+		    };
 		    station.marker = new google.maps.Marker({
 			position: station.latlng, 
 			map: map,
-			icon: createIcon(station.numBikes, station.numEmptyDocks)
+			icon: createIcon(stationJson.nbBikes, stationJson.nbEmptyDocks)
 		    });
-		    
+
+		    bixiStations[bixiStations.length] = station;
+		    bixiBounds.extend(station.latlng);
 		    google.maps.event.addListener(station.marker, 'click', function() {		   
 			infoWindow.setContent("<b>" + station.name + 
 					      "</b><br/>Bikes: " + 

@@ -18,19 +18,10 @@ marker images locally for some reason that I haven't determined yet
 
 Due to the same origin policy enforced by web browsers, bike station
 information needs to be served up from the same server as that of the main
-site's HTML/Javascript. I currently use the following script (running as a
-cron job) to periodically sync information from the BIXI web site onto the
-nixi.ca server.
-
-    #!/bin/sh
-    
-    cd $HOME/Sites/nixi
-    
-    for CITY in montreal toronto capital; do
-        BASEURL=https://$CITY.bixi.com/data
-    
-        curl -q $BASEURL/bikeStations.xml > bikeStations-$CITY.xml
-    done
+site's HTML/Javascript. I currently use the 'update-bikestations.sh' script 
+(running as cron job) to periodically sync information from the BIXI web site
+onto the nixi.ca server (converting it to json from xml using a small python
+script in the process).
 
 # Credits / Acknowledgements
 
