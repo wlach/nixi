@@ -81,6 +81,7 @@ function updateCity(cityIndex) {
 	    json.stations.forEach(function(stationJson, i, a) {
 		if (stationJson.installed) {
 		    var station = {
+			id: stationJson.id,
 			name: stationJson.name,			 
 			numBikes: stationJson.nbBikes,
 			numEmptyDocks: stationJson.nbEmptyDocks,
