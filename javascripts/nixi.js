@@ -282,7 +282,7 @@ function init() {
 	$('#intro-content p').hide();
 	$("#intro-content").prepend(ich.error_widget({
 	    id: "unsupported-error-widget",
-	    description: "Nixi currently requires a browser that supports advanced HTML5 features. If you can, please upgrade to a modern browser like <a href=\"http://www.mozilla.com/firefox/fx/\">Mozilla Firefox</a> or <a href=\"http://www.google.com/chrome\">Google Chrome</a>. If you can't, sorry. :-("
+	    description: "Nixi currently requires a browser that supports advanced HTML5 features (specifically canvas and localStorage). If you can, please upgrade to a modern browser like <a href=\"http://www.mozilla.com/firefox/fx/\">Mozilla Firefox</a> or <a href=\"http://www.google.com/chrome\">Google Chrome</a>. If you can't install a better web browser for any reason, sorry. :-("
 	}));
 
 	$('#nearby-panel').hide();
