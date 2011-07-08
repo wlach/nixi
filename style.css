@@ -2,7 +2,6 @@
 
 /* General */
 a { color: #5A7F85; }
-div.container { overflow: hidden; margin: 40px auto; width: 960px; }
 h2 { font-weight: bold; font-size: 22px; color: #000000; margin: 0 0 0.81em; line-height: 1.62em; }
 p { font-size: 14px; color: #404040; margin: 0 0 0.81em; line-height: 1.25em}
 
@@ -12,13 +11,12 @@ p { font-size: 14px; color: #404040; margin: 0 0 0.81em; line-height: 1.25em}
 #header h1 a { line-height: 1; float: left; margin: 0; font-size: 28px; font-weight: bold; color: #FFFFFF; }
 #header h1 a:hover { text-decoration: none; }
 #header h1 span { font-size: 18px; font-weight: bold; color: #ADBFC2; }
-#header h1 span.beta { font-size: 18px; color: #FF5555; }
 #header p { float: left; line-height: 1; margin: 0 0 0 10px; font-size: 18px; color: #D6DFE1; position: relative; bottom: -8px;  }
 #header div#nav { text-align: right; position: absolute; right: 10px; top: 15px; }
 
 /* Panels */
 div.ui-layout-west { overflow: auto; padding-top: 8px; }
-#panels { padding: 0 0 0 0; overflow: hidden; width: 100%; }
+#panels { padding: 0 0 0 0; }
 #panels p { font-size: 12px; color: #000000; }
 #panels div.panel h2 { line-height: 1; font-weight: bold; padding: 5px 0 5px 10px; margin: 0; font-size: 16px; }
 #panels div.panel h2 a.link-text-selected { font-weight: bold; color: #000; }
@@ -36,30 +34,16 @@ div.ui-layout-west { overflow: auto; padding-top: 8px; }
 #panels #trip-planner-panel { display: none; }
 
 #panels form { margin: auto; }
-#panels form div { clear: both; overflow: hidden; margin: 0; padding: 0 0 5px; }
+#panels form div { clear: both; margin: 0; padding: 0 0 5px; }
 #panels form div.submit { width: 100%; margin: 0; padding: 8px 0 0 0; text-align: right; }
 #panels form p.error { color:#F00; }
 #panels form a.help { color:#22F; }
 #panels form p input { width: 228px; }
-#panels form div.location-input { width: 248px; clear: none; float: left; overflow: hidden;}
-#panels form div.reverse-input { clear: none; padding: 32px 0px; vertical-align: middle; overflow: hidden;}
+#panels form div.location-input { width: 248px; clear: none; float: left; }
+#panels form div.reverse-input { clear: none; padding: 32px 0px; vertical-align: middle; }
 
-#panels form#nearby-form div.location-input { width: 100%; clear: none; overflow: hidden;}
+#panels form#nearby-form div.location-input { width: 100%; clear: none;}
 #panels form#nearby-form div.location-input p input { width: 270px; }
-
-/* Directions */
-#route-plan { display: none; }
-#route-plan ol { margin: 0; padding: 0; }
-#route-plan ol li { margin: 0 0 10px; padding: 0 0 10px 24px; list-style: none; background-position: top left; background-repeat: no-repeat; border-bottom: 1px dotted #808080; }
-#route-plan ol li.depart { background-image: url('../images/label_from.png');}
-#route-plan ol li.walk { background-image: url('../images/icon_walk.png'); }
-#route-plan ol li.board { background-image: url('../images/icon_bus.png'); }
-#route-plan ol li.alight { background-image: url('../images/icon_walk.png'); }
-#route-plan ol li.arrive { background-image: url('../images/label_to.png');}
-#route-plan p { margin: 0 0 10px; }
-#route-plan p.feedback { color: #808080; margin: 0; }
-#route-plan p.warning { color: #FF5555; }
-#route-plan a { color: #22F; }
 
 /* Around me results */
 #nearby div.content { padding: 0px 5px 5px 5px; }
@@ -81,5 +65,5 @@ div.ui-layout-center { padding-top: 8px; }
 #content { margin: 10px 40px 20px 20px; }
 
 /* Footer */
-#footer { overflow: hidden; }
 #footer p { font-size: 12px; color: #000000; padding: 10px; margin: 0 0 10px; }
+#footer .FB_UI_Hidden 
