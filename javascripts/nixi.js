@@ -12,7 +12,13 @@ var cities = [
     },
     { name: "Ottawa",
       url: "bikeStations-capital.json"
-    } 
+    },
+    { name: "Boston",
+      url: "bikeStations-boston.json"
+    },
+    { name: "Washington",
+      url: "bikeStations-washington.json"
+    }
 ];
 	       
 var bixiStations = [];
