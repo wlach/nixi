@@ -341,6 +341,7 @@ $(document).ready(function () {
     '/cities/:cityId': {
       on: function(cityId) {
         console.log("City is " + cityId);
+        localStorage["defaultCityId"] = cityId;
         updateCity(cityId);
       },
       '/places/(.+)': {
