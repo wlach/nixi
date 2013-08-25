@@ -1,182 +1,140 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
+    <title>Nixi - Find BIXI stations, faster!</title>
+    <meta name="description" content="An alternative web interface for the BIXI bike share system.">
+    <meta name="author" content="William Lachance">
+    <meta name="keywords" content="bixi,nixi,bike share">
 
-  <title>Nixi - Find BIXI stations, faster!</title>
-  <meta name="description" content="An alternative web interface for the BIXI bike share system.">
-  <meta name="author" content="William Lachance">
-  <meta name="keywords" content="bixi,nixi,bike share">
+    <meta property="og:title" content="Nixi" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://nixi.ca" />
+    <meta property="og:description" content="An alternative web interface for the BIXI bike share system. See at a glance which stations are empty or full!">
+    <meta property="og:image" content="http://masalalabs.ca/wp-content/uploads/2011/06/nixi_shot_ffx.png" />
+    <meta property="og:site_name" content="Nixi" />
+    <meta property="fb:admins" content="652596110" />
 
-  <meta property="og:title" content="Nixi" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="http://nixi.ca" />
-  <meta property="og:description" content="An alternative web interface for the BIXI bike share system. See at a glance which stations are empty or full!">
-  <meta property="og:image" content="http://masalalabs.ca/wp-content/uploads/2011/06/nixi_shot_ffx.png" />
-  <meta property="og:site_name" content="Nixi" />
-  <meta property="fb:admins" content="652596110" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="scaffold.css" rel="stylesheet" />
-  <link href="style.css" rel="stylesheet" />
-  <link href="aristo-jquery-theme/css/Aristo/jquery-ui-1.8.7.custom.css" rel="stylesheet" />
+    <!-- Le styles -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/nixi.css" rel="stylesheet">
+    </style>
 
-  <link rel="icon" href="images/nixi-favico.png"/>
-  <script src="javascripts/modernizr-min.js"></script>
- </head>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-<body>
-  <div id="fb-root"></div>
-  <div id="header" class="ui-layout-north">
-    <h1><a href="/">nixi<span>.ca</span></a></h1>
-    <p>Find BIXI stations, faster!</p>
-    <div id="nav">
-      <select id="city-selector">
-      </select>
-    </div>
-  </div>
+  </head>
 
-  <div class="ui-layout-west">
-    <div id="panels">
-      <div class="panel" id="intro">
-	<div class="content" id="intro-content">
-	  <p>
-	    Welcome to nixi.ca, an alternative web interface for the <a href="http://bixi.com">BIXI</a> bike share system.
-	  </p>
-	  <div class="ui-widget" id="city-hint-widget">
-	    <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 8px;">
-	      <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .7em;"></span>
-		<strong>Hint:</strong> You can choose your preferred city with the selector in the top right corner.</p>	
-	    </div>
-	  </div>
-	</div>
-      </div>
-      <div class="panel" style="display:none;">
-	<div class="content">
-	  <div id="tab-selector">
-	    <input type="radio" id="find-nearby" name="radio" checked="checked"/><label for="find-nearby">Find Nearby</label>
-	    <input type="radio" id="trip-planner" name="radio"/><label for="trip-planner">Plan Trip</label>
-	  </div>
-	</div>
-      </div>
-      <div class="panel" id="nearby-panel">
-	<div class="content">
-	  <form id="nearby-form" class="ui-form">
-	    <div class="location-input">
-	      <p>
-		<strong>Where</strong><br />
-		<input id="nearby-input" type="text" required autofocus/>
-	      </p>
-	    </div>
-	    <div class="submit">
-	      <input type="submit" id="find-nearby-button" value="Find!" />
-	    </div>
-	  </form>
-	</div>
-      </div>
-      <div class="panel" id="nearby">
-	<div class="content">
-	  <div id="nearby-content">
-	  </div>
-	</div>
-      </div>
-      <div class="panel" id="trip-planner-panel">
-	<div class="content">
-	  <form id="directions-form" class="ui-form">
-	    <div class="location-input">
-	      <p>
-		<strong>From</strong><br />
-		<input id="from-input" type="text" required/>
-	      </p>
-	      <p>
-		<strong>To</strong><br />
-		<input id="to-input" type="text" required/>
-	      </p>
-	    </div>
-	    <div class="reverse-input">
-	      <div id="reverse-button"></div>
-	    </div>
-	    <div class="submit">
-	      <input type="submit" id="plan-button" value="Plan!" />
-	    </div>
-	  </form>
-	</div>
+  <body>
+    <div class="navbar navbar-fixed-top navbar-inverse" id="navbar">
+      <div class="navbar-inner">
+          <a class="brand" href="/">nixi.ca</a>
+          <ul class="nav pull-right">
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="selected-city"></span><b class="caret"></b></a>
+              <ul id="city-menu" class="dropdown-menu">
+              </ul>
+            </li>
+          </ul>
       </div>
     </div>
-    <div id="footer">
-      <p>
-	Copyright 2011 <a href="http://masalalabs.ca">William Lachance</a>. nixi.ca is not affiliated with, licensed or endorsed by BIXI or the Public Bike System Company. nixi is <a href="http://www.gnu.org/philosophy/free-sw.html">free software</a>, source available on <a href="http://github.com/wlach/nixi">github</a>. Patches welcome!
-      </p>
-      <div style="padding: 10px;">
-	<script src="http://connect.facebook.net/en_US/all.js#appId=180031478720479&amp;xfbml=1"></script><fb:like href="http://nixi.ca" send="false" width="260" show_faces="true" font="lucida grande"></fb:like>
+
+      <div id="sidebar" class="sidebar" style="display:none;">
+        <p>
+	  Welcome to nixi.ca, an alternative web interface for the <a href="http://bixi.com">BIXI</a> bike share system.
+	</p>
+         <!--
+        <div class="btn-group">
+          <button type="button" class="btn btn-default">Nearby</button>
+          <button type="button" class="btn btn-default">Search</button>
+        </div>
+        -->
+        <h3>Search</h3>
+        <form id="nearby-form" class="form-search">
+          <div class="input-append">
+            <input id="nearby-input" class="search-query sidebar-input" type="text" autocomplete="off" data-provide="typeahead" placeholder="Address or Intersection"></input>
+            <button class="btn" type="submit">Find!</button>
+          </div>
+        </form>
+	<div id="nearby-content">
+	</div>
+        <!--
+            <h3>Recent searches</h3>
+        <p>3566 Avenue Prud'homme</p>
+        -->
+        <footer>
+          <p>
+	    <small>Copyright 2012 <a href="http://wrla.ch">William Lachance</a>. nixi.ca is not affiliated with, licensed or endorsed by BIXI or the Public Bike System Company. nixi is <a href="http://www.gnu.org/philosophy/free-sw.html">free software</a>, source available on <a href="http://github.com/wlach/nixi">github</a>. Patches welcome!</small>
+          </p>
+          <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fnixi.ca&amp;send=false&amp;layout=standard&amp;width=292&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=100&amp;appId=180031478720479" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:100px;" allowTransparency="true"></iframe>
+        </footer>
       </div>
-    </div>
-  </div>
-
-  <div class="ui-layout-center"><div id="map_canvas"></div></div>
-
-  <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
-  <script src="http://maps.google.com/maps/api/js?libraries=places&sensor=false"></script>
-  <script src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
-  <script src="http://code.jquery.com/ui/1.8.13/jquery-ui.min.js"></script>
-
-  <script src="layout/jquery.layout.min-1.2.0.js"></script>
-  <script src="javascripts/js-class.js"></script>
-  <script src="javascripts/bluff-min.js"></script>
-  <script src="javascripts/ICanHaz.min.js"></script>
-
-  <script src="javascripts/nixi.js"></script>
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-        init();
-    });
-  </script>
-
-  <script type="text/javascript">
-
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', "UA-1648932-6"]);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-     })();
-
-  </script>
-
-  <script id="stations" type="text/html">
-    <div id="nearby-content">
-      <h2>{{ title }}</h2>
-      {{#stations}}
-      <div class="nearby-station" id="station-{{ id }}" station-id="{{ id }}">
-	<table>
-	  <tr>
-	    <td class="station-graph">
-	    <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
-	    </td>
-	  <td class="station">
-	    <p class="station-name">{{ name }}</p>
-	    <p class="station-info">Distance: {{ distance }}m - Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</p>
-	  </td>
-	  </tr>
-	</table>
+      <div id="map-container" class="map-container">
+        <div id="map" class="map"></div>
       </div>
-      {{/stations}}
-    </div>
-  </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
+    <script src="js/js-class.js"></script>
+    <script src="js/bluff-min.js"></script>
+    <script src="js/ICanHaz.min.js"></script>
+    <script src="js/director-1.1.6.min.js"></script>
+    <script src="js/nixi.js"></script>
 
-  <script id="error_widget" type="text/html">
-    <div class="ui-widget" style="padding: 8px 0px;" id="{{ id }}">
-      <div class="ui-state-error ui-corner-all" style="padding: 8px;">
-	<p id="error-description"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .7em;"></span>
-	  <strong>Error:</strong> {{{ description }}}</p>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', "UA-1648932-6"]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+    <script id="stations" type="text/html">
+      <div id="nearby-content">
+        <!-- <h4>{{ title }}<a class="close" href="#">&times;</a></h4>-->
+        <p class="result-header">{{ title }}</p>
+        <ul class="nav nav-list station-sidenav">
+        {{#stations}}
+        <li class="nearby-station" id="station-{{ id }}" station-id="{{ id }}">
+          <a href="#">
+            <i class="icon-chevron-right"></i>
+	    <table>
+	      <tr>
+	        <td class="station-graph">
+	          <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
+	        </td>
+	        <td class="station">
+	          <p>{{ name }}</p><p><small>Distance: {{ distance }}m<br/>Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</small></p>
+	        </td>
+	      </tr>
+	    </table>
+          </a>
+        </li>
+        {{/stations}}
+        </ul>
       </div>
-    </div>
-  </script>
+    </script>
 
-</body>
+    <script id="error_widget" type="text/html">
+      <div class="ui-widget" style="padding: 8px 0px;" id="{{ id }}">
+        <div class="ui-state-error ui-corner-all" style="padding: 8px;">
+	  <p id="error-description"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .7em;"></span>
+	    <strong>Error:</strong> {{{ description }}}</p>
+        </div>
+      </div>
+    </script>
 
-
+  </body>
 </html>
+
