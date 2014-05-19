@@ -342,14 +342,12 @@ $(document).ready(function () {
   var router = Router({
     '/cities/:cityId': {
       on: function(cityId) {
-        console.log("City is " + cityId);
         localStorage["defaultCityId"] = cityId;
         updateCity(cityId);
       },
       '/places/(.+)': {
         on: function(cityId, placeName) {
           var decodedPlaceName = decodeURI(placeName);
-          console.log("Place is " + decodedPlaceName);
           updatePlace(decodedPlaceName);
         }
       }
