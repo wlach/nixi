@@ -46,19 +46,19 @@ function createIcon(numBikes, numEmptyDocks) {
 $(document).ready(function () {
   var cities = {
     "montreal": { name: "Montr&eacute;al",
-                  url: "bikeStations-montreal.json"
+                  url: "bixi-montreal.json"
                 },
     "toronto": { name: "Toronto",
-                 url: "bikeStations-toronto.json"
+                 url: "bixi-toronto.json"
                },
     "ottawa": { name: "Ottawa",
-                url: "bikeStations-capital.json"
+                url: "capital-bixi.json"
               },
     "boston": { name: "Boston",
-                url: "bikeStations-boston.json"
+                url: "hubway.json"
               },
     "washington": { name: "Washington",
-                    url: "bikeStations-washington.json"
+                    url: "capital-bikeshare.json"
                   }
   };
 
@@ -266,25 +266,27 @@ $(document).ready(function () {
       type: "GET",
       url: cities[cityId].url,
       dataType: "json",
-      success: function(json) {
+      success: function(network) {
+        var network = network.network;
+
 	bixiStations = [];
         bixiBounds = new google.maps.LatLngBounds();
 
-	json.stations.forEach(function(stationJson, i, a) {
-	  if (stationJson.installed) {
+        // convert installed station json data into our own format
+	network.stations.forEach(function(stationDict, i, a) {
+	  if (stationDict.extra.installed) {
 	    var station = {
-	      id: stationJson.id,
-	      name: stationJson.name,
-	      numBikes: stationJson.nbBikes,
-	      numEmptyDocks: stationJson.nbEmptyDocks,
-	      latlng: new google.maps.LatLng(stationJson.lat,
-					     stationJson.long),
+	      id: stationDict.id,
+	      name: stationDict.name,
+	      numBikes: stationDict.free_bikes,
+	      numEmptyDocks: stationDict.empty_slots,
+	      latlng: new google.maps.LatLng(stationDict.latitude,
+					     stationDict.longitude),
 	    };
-
 	    station.marker = new google.maps.Marker({
 	      position: station.latlng,
 	      map: map,
-	      icon: createIcon(stationJson.nbBikes, stationJson.nbEmptyDocks)
+	      icon: createIcon(station.numBikes, station.numEmptyDocks)
 	    });
 
 	    bixiStations[bixiStations.length] = station;
