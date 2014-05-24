@@ -1,20 +1,20 @@
-function createIcon(numBikes, numEmptyDocks) {
+function createIcon(freeBikes, emptySlots) {
     var imageCanvas, context;
     var radius;
     var alpha;
-    if (numBikes == 0 && numEmptyDocks == 0) {
+    if (freeBikes == 0 && emptySlots == 0) {
 	// edge case: station with nothing in it
 	radius = 5;
 	alpha = 0.0;
     } else {
-	radius = (numBikes+numEmptyDocks)/2;
+	radius = (freeBikes+emptySlots)/2;
 	if (radius > 20) {
 	    radius = 20;
 	} else if (radius < 5) {
 	    radius = 8;
 	}
 
-	alpha = numBikes / (numBikes+numEmptyDocks);
+	alpha = freeBikes / (freeBikes+emptySlots);
 	if (alpha > 0.5 && alpha < 1.0) {
 	    alpha=0.5;
 	} else if (alpha < 0.1 && alpha > 0.0) {
@@ -44,30 +44,12 @@ function createIcon(numBikes, numEmptyDocks) {
 }
 
 $(document).ready(function () {
-  var cities = {
-    "montreal": { name: "Montr&eacute;al",
-                  url: "bixi-montreal.json"
-                },
-    "toronto": { name: "Toronto",
-                 url: "bixi-toronto.json"
-               },
-    "ottawa": { name: "Ottawa",
-                url: "capital-bixi.json"
-              },
-    "boston": { name: "Boston",
-                url: "hubway.json"
-              },
-    "washington": { name: "Washington",
-                    url: "capital-bikeshare.json"
-                  }
-  };
+  var currentNetworkId = null;
 
-  var currentCityId = null;
-
-  for (var i in cities) {
-    $("#city-menu").append('<li><a href="#/cities/' + i + '">' + cities[i].name + '</a></li>');
+  for (var i in networks) {
+    $("#network-menu").append('<li><a href="#/networks/' + i + '">' + networks[i].name + '</a></li>');
   }
-  $('#city-menu').on('touchstart.dropdown.data-api', function(e) { e.stopPropagation() });
+  $('#network-menu').on('touchstart.dropdown.data-api', function(e) { e.stopPropagation() });
 
   var bixiStations = [];
 
@@ -130,7 +112,7 @@ $(document).ready(function () {
     $("#nearby-input").val(placeName)
     $("#nearby-input").blur();
 
-    $("#city-hint-widget").hide();
+    $("#network-hint-widget").hide();
     $("#nearby-error-widget").remove();
     $("#nearby").hide();
 
@@ -201,23 +183,23 @@ $(document).ready(function () {
 
 	  // Create pie chart
 
-	  if (station.numBikes == 0 && station.numEmptyDocks == 0) {
+	  if (station.freeBikes == 0 && station.emptySlots == 0) {
 	    return;
 	  }
 	  var data = {
 	    items: []
 	  };
 
-	  if (station.numBikes > 0) {
-	    data.items[data.items.length] = {label: 'bikes', data: station.numBikes };
+	  if (station.freeBikes > 0) {
+	    data.items[data.items.length] = {label: 'bikes', data: station.freeBikes };
 	  } else {
 	  }
-	  if (station.numEmptyDocks > 0) {
-	    data.items[data.items.length] = {label: 'stations', data: station.numEmptyDocks };
+	  if (station.emptySlots > 0) {
+	    data.items[data.items.length] = {label: 'stations', data: station.emptySlots };
 	  }
 
 	  var pieChart = new Bluff.Pie('station-graph-' + station.id, '40x40');
-	  if (station.numBikes == 0) {
+	  if (station.freeBikes == 0) {
 	    pieChart.set_theme({
 	      colors: ['#fbb' ],
 	      background_colors: ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
@@ -254,58 +236,53 @@ $(document).ready(function () {
     return false;
   }
 
-  function updateCity(cityId) {
-    if (cityId === currentCityId) {
+  function updateNetwork(networkId) {
+    if (networkId === currentNetworkId) {
       return;
     }
-    currentCityId = cityId;
+    currentNetworkId = networkId;
 
-    $("#selected-city").html(cities[cityId].name);
-
+    $("#selected-network").html(networks[networkId].name);
     $.ajax({
       type: "GET",
-      url: cities[cityId].url,
+      url: networkId + ".json",
       dataType: "json",
-      success: function(network) {
-        var network = network.network;
-
+      success: function(stations) {
 	bixiStations = [];
         bixiBounds = new google.maps.LatLngBounds();
 
         // convert installed station json data into our own format
-	network.stations.forEach(function(stationDict, i, a) {
-	  if (stationDict.extra.installed) {
-	    var station = {
-	      id: stationDict.id,
-	      name: stationDict.name,
-	      numBikes: stationDict.free_bikes,
-	      numEmptyDocks: stationDict.empty_slots,
-	      latlng: new google.maps.LatLng(stationDict.latitude,
-					     stationDict.longitude),
-	    };
-	    station.marker = new google.maps.Marker({
-	      position: station.latlng,
-	      map: map,
-	      icon: createIcon(station.numBikes, station.numEmptyDocks)
-	    });
+	stations.forEach(function(stationDict, i, a) {
+	  var station = {
+            id: stationDict.id,
+	    name: stationDict.name,
+	    freeBikes: stationDict.freeBikes,
+	    emptySlots: stationDict.emptySlots,
+	    latlng: new google.maps.LatLng(stationDict.latitude,
+					   stationDict.longitude),
+	  };
+	  station.marker = new google.maps.Marker({
+	    position: station.latlng,
+	    map: map,
+	    icon: createIcon(station.freeBikes, station.emptySlots)
+	  });
 
-	    bixiStations[bixiStations.length] = station;
-	    bixiBounds.extend(station.latlng);
-	    google.maps.event.addListener(station.marker, 'click', function() {
-	      infoWindow.setContent("<b>" + station.name +
-				    "</b><br/>Bikes: " +
-				    station.numBikes + ' - ' +
-				    "Docks: " + station.numEmptyDocks);
-	      infoWindow.open(map, station.marker);
-	    });
-	  }
+	  bixiStations[bixiStations.length] = station;
+	  bixiBounds.extend(station.latlng);
+	  google.maps.event.addListener(station.marker, 'click', function() {
+	    infoWindow.setContent("<b>" + station.name +
+				  "</b><br/>Bikes: " +
+				  station.freeBikes + ' - ' +
+				  "Docks: " + station.emptySlots);
+	    infoWindow.open(map, station.marker);
+	  });
 	});
 
 	map.fitBounds(bixiBounds);
 
 	$("form#nearby-form").unbind();
 	$("form#nearby-form").submit(function() {
-            window.location.hash = '/' + ['cities', currentCityId, 'places', $("#nearby-input").val()].join('/');
+            window.location.hash = '/' + ['networks', currentNetworkId, 'places', $("#nearby-input").val()].join('/');
 
           return false;
 	});
@@ -330,23 +307,23 @@ $(document).ready(function () {
     });
   }
 
-  // get city preference from user and update to it. you might think it
+  // get network preference from user and update to it. you might think it
   // would make sense to use geolocation for this, but that's actually
   // kinda slow at least with Firefox
-  var cityId = localStorage["defaultCityId"];
-  if (cityId == undefined) {
-    cityId = "montreal";
-    $("#city-hint-widget").show();
+  var networkId = localStorage["defaultNetworkId"];
+  if (networkId == undefined) {
+    networkId = "bixi-montreal";
+    $("#network-hint-widget").show();
   }
 
   var router = Router({
-    '/cities/:cityId': {
-      on: function(cityId) {
-        localStorage["defaultCityId"] = cityId;
-        updateCity(cityId);
+    '/networks/:networkId': {
+      on: function(networkId) {
+        localStorage["defaultNetworkId"] = networkId;
+        updateNetwork(networkId);
       },
       '/places/(.+)': {
-        on: function(cityId, placeName) {
+        on: function(networkId, placeName) {
           var decodedPlaceName = decodeURI(placeName);
           updatePlace(decodedPlaceName);
         }
@@ -354,5 +331,5 @@ $(document).ready(function () {
     }
   }).configure({ recurse: "forward" });
 
-  router.init("/cities/" + cityId);
+  router.init("/networks/" + networkId);
 });
