@@ -53,32 +53,12 @@ $(document).ready(function () {
 
   var bixiStations = [];
 
-  var map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 1,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    center: new google.maps.LatLng(45.64, -73.4)
-  });
-  map.setZoom(15);
-
-  var bikeLayer = new google.maps.BicyclingLayer();
-  bikeLayer.setMap(map);
-
-  var directionsService = new google.maps.DirectionsService();
-  var walkingDirectionsDisplay = new google.maps.DirectionsRenderer({ markerOptions: {
-    zIndex: google.maps.Marker.MAX_ZINDEX } });
-  var locationMarker = new google.maps.Marker({
-    map: map,
-    visible: false
-  });
+  var map;
 
   var geocoder = new google.maps.Geocoder();
   var bixiBounds;
-  var infoWindow = new google.maps.InfoWindow();
-  google.maps.event.addListener(map, 'click', function() {
-    infoWindow.close();
-  });
 
-  function updateDimensions() {
+  function updateDisplay() {
     $("#sidebar").show();
 
     if ($(window).width() < 800) {
@@ -95,16 +75,43 @@ $(document).ready(function () {
       $("#sidebar").height($(window).height() - 60);
       $("#map-container").height($(window).height() - 40);
       $("#map-container").width($(window).width() - $("#sidebar").width() - 40);
-      // resize map to fit
-      google.maps.event.trigger(map, "resize");
+
+      if (currentNetworkId) {
+        if (!map) {
+          map = {};
+          map.map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 1,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            center: new google.maps.LatLng(networks[currentNetworkId].latitude,
+                                           networks[currentNetworkId].longitude)
+          });
+          map.map.setZoom(15);
+
+          map.directionsService = new google.maps.DirectionsService();
+          map.walkingDirectionsDisplay = new google.maps.DirectionsRenderer({
+            markerOptions: { zIndex: google.maps.Marker.MAX_ZINDEX } });
+          map.bikeLayer = new google.maps.BicyclingLayer();
+          map.bikeLayer.setMap(map.map);
+          map.locationMarker = new google.maps.Marker({
+            map: map.map,
+            visible: false
+          });
+          map.infoWindow = new google.maps.InfoWindow();
+          google.maps.event.addListener(map.map, 'click', function() {
+            map.infoWindow.close();
+          });
+        }
+        // resize map to fit
+        google.maps.event.trigger(map.map, "resize");
+      }
       $("#map-container").show();
     }
   }
 
-  updateDimensions();
+  updateDisplay();
 
   $(window).resize(function() {
-    updateDimensions();
+    updateDisplay();
   });
 
   function updatePlace(placeName) {
@@ -116,7 +123,7 @@ $(document).ready(function () {
     $("#nearby-error-widget").remove();
     $("#nearby").hide();
 
-    walkingDirectionsDisplay.setMap(null);
+    map.walkingDirectionsDisplay.setMap(null);
 
     var oldFindButtonVal = $("#find-nearby-button").val();
 
@@ -130,8 +137,8 @@ $(document).ready(function () {
 	var latlng = results[0].geometry.location;
 	locationMarker.setPosition(latlng);
 	locationMarker.setVisible(true);
-	map.setCenter(latlng);
-	map.setZoom(15);
+	map.map.setCenter(latlng);
+	map.map.setZoom(15);
 
 	var nearby_stations = bixiStations.map(function(station) {
 	  var distance = google.maps.geometry.spherical.computeDistanceBetween(latlng,
@@ -165,15 +172,15 @@ $(document).ready(function () {
 	  }).click(function(e) {
 	    $('.nearby-station').removeClass("active");
 	    $(this).addClass("active");
-	    directionsService.route({
+	    map.directionsService.route({
 	      origin: latlng,
 	      destination: station.latlng,
 	      travelMode: google.maps.DirectionsTravelMode.WALKING
 	    }, function(response, status) {
 	      if (status == google.maps.DirectionsStatus.OK) {
 		locationMarker.setVisible(false);
-		walkingDirectionsDisplay.setDirections(response);
-		walkingDirectionsDisplay.setMap(map);
+		map.walkingDirectionsDisplay.setDirections(response);
+		map.walkingDirectionsDisplay.setMap(map.map);
 	      } else {
 		console.log("Error processing directions to station!");
 	      }
@@ -240,7 +247,6 @@ $(document).ready(function () {
     if (networkId === currentNetworkId) {
       return;
     }
-    currentNetworkId = networkId;
 
     $("#selected-network").html(networks[networkId].name);
     $.ajax({
@@ -248,6 +254,9 @@ $(document).ready(function () {
       url: networkId + ".json",
       dataType: "json",
       success: function(stations) {
+        currentNetworkId = networkId;
+        updateDisplay();
+
 	bixiStations = [];
         bixiBounds = new google.maps.LatLngBounds();
 
@@ -263,22 +272,22 @@ $(document).ready(function () {
 	  };
 	  station.marker = new google.maps.Marker({
 	    position: station.latlng,
-	    map: map,
+	    map: map.map,
 	    icon: createIcon(station.freeBikes, station.emptySlots)
 	  });
 
 	  bixiStations[bixiStations.length] = station;
 	  bixiBounds.extend(station.latlng);
 	  google.maps.event.addListener(station.marker, 'click', function() {
-	    infoWindow.setContent("<b>" + station.name +
+	    map.infoWindow.setContent("<b>" + station.name +
 				  "</b><br/>Bikes: " +
 				  station.freeBikes + ' - ' +
 				  "Docks: " + station.emptySlots);
-	    infoWindow.open(map, station.marker);
+	    map.infoWindow.open(map.map, station.marker);
 	  });
 	});
 
-	map.fitBounds(bixiBounds);
+	map.map.fitBounds(bixiBounds);
 
 	$("form#nearby-form").unbind();
 	$("form#nearby-form").submit(function() {
