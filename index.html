@@ -37,8 +37,8 @@
     </div>
 
       <div id="sidebar" class="sidebar" style="display:none;">
-        <p>
-	  Welcome to nixi.ca, an alternative web interface for the <a href="http://bixi.com">BIXI</a> bike share system.
+        <p id="intro">
+	  Welcome to nixi.ca, a fast way to access public bike system information.
 	</p>
          <!--
         <div class="btn-group">
@@ -46,10 +46,9 @@
           <button type="button" class="btn btn-default">Search</button>
         </div>
         -->
-        <h3>Search</h3>
         <form id="nearby-form" class="form-search">
           <div class="input-append">
-            <input id="nearby-input" class="search-query sidebar-input" type="text" autocomplete="off" data-provide="typeahead" placeholder="Address or Intersection"></input>
+            <input id="nearby-input" class="search-query sidebar-input" type="text" autocomplete="off" data-provide="typeahead" placeholder="Search - Address or Intersection"></input>
             <button class="btn" type="submit">Find!</button>
           </div>
         </form>
