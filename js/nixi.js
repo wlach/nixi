@@ -92,7 +92,7 @@ $(document).ready(function () {
             center: new google.maps.LatLng(networks[currentNetworkId].latitude,
                                            networks[currentNetworkId].longitude)
           });
-          map.map.setZoom(15);
+          map.map.setZoom(14);
 
           map.directionsService = new google.maps.DirectionsService();
           map.walkingDirectionsDisplay = new google.maps.DirectionsRenderer({
@@ -142,8 +142,8 @@ $(document).ready(function () {
 
       if (results.length > 0) {
 	var latlng = results[0].geometry.location;
-	locationMarker.setPosition(latlng);
-	locationMarker.setVisible(true);
+	map.locationMarker.setPosition(latlng);
+	map.locationMarker.setVisible(true);
 	map.map.setCenter(latlng);
 	map.map.setZoom(15);
 
@@ -185,7 +185,7 @@ $(document).ready(function () {
 	      travelMode: google.maps.DirectionsTravelMode.WALKING
 	    }, function(response, status) {
 	      if (status == google.maps.DirectionsStatus.OK) {
-		locationMarker.setVisible(false);
+		map.locationMarker.setVisible(false);
 		map.walkingDirectionsDisplay.setDirections(response);
 		map.walkingDirectionsDisplay.setMap(map.map);
 	      } else {
@@ -250,10 +250,16 @@ $(document).ready(function () {
     return false;
   }
 
-  function updateNetwork(networkId) {
+  function updateNetwork(networkId, placeName) {
     if (networkId === currentNetworkId) {
+      if (placeName) {
+        updatePlace(placeName);
+      }
       return;
     }
+
+    $("#nearby-content").hide();
+    $("#nearby-input").val("");
 
     $("#selected-network").html(networks[networkId].name);
     $.ajax({
@@ -294,7 +300,13 @@ $(document).ready(function () {
 	  });
 	});
 
-	map.map.fitBounds(bixiBounds);
+        if (placeName) {
+          updatePlace(placeName);
+        } else {
+	  map.map.setCenter(new google.maps.LatLng(networks[currentNetworkId].latitude,
+                                                   networks[currentNetworkId].longitude));
+          document.title = "Nixi Bike Station Finder - " + networks[networkId].name;
+        }
 
 	$("form#nearby-form").unbind();
 	$("form#nearby-form").submit(function() {
@@ -335,17 +347,17 @@ $(document).ready(function () {
   var router = Router({
     '/networks/:networkId': {
       on: function(networkId) {
-        localStorage["defaultNetworkId"] = networkId;
-        updateNetwork(networkId);
+        updateNetwork(networkId, null);
       },
       '/places/(.+)': {
         on: function(networkId, placeName) {
           var decodedPlaceName = decodeURI(placeName);
-          updatePlace(decodedPlaceName);
+          updateNetwork(networkId, decodedPlaceName);
         }
       }
     }
-  }).configure({ recurse: "forward" });
+  }).configure();
 
   router.init("/networks/" + networkId);
 });
+

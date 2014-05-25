@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Nixi - Find BIXI stations, faster!</title>
+    <title>Nixi</title>
     <meta name="description" content="An alternative web interface for the BIXI bike share system."/>
     <meta name="author" content="William Lachance"/>
     <meta name="keywords" content="bixi,nixi,bike share"/>
@@ -108,7 +108,7 @@
 	          <canvas id="station-graph-{{ id }}" width="40" height="40"></canvas>
 	        </td>
 	        <td class="station">
-	          <p>{{ name }}</p><p><small>Distance: {{ distance }}m<br/>Empty Docks: {{ numEmptyDocks }} - Bikes: {{ numBikes }}</small></p>
+	          <p>{{ name }}</p><p><small>Distance: {{ distance }}m<br/>Empty Docks: {{ emptySlots }} - Bikes: {{ freeBikes }}</small></p>
 	        </td>
 	      </tr>
 	    </table>
