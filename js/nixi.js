@@ -251,6 +251,7 @@ $(document).ready(function () {
   }
 
   function updateNetwork(networkId, placeName) {
+    localStorage["defaultNetworkId"] = networkId;
     if (networkId === currentNetworkId) {
       if (placeName) {
         updatePlace(placeName);
