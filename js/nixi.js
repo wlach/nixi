@@ -1,46 +1,53 @@
-function createIcon(freeBikes, emptySlots) {
-    var imageCanvas, context;
-    var radius;
-    var alpha;
-    if (freeBikes == 0 && emptySlots == 0) {
-	// edge case: station with nothing in it
-	radius = 5;
-	alpha = 0.0;
-    } else {
-	radius = (freeBikes+emptySlots)/2;
-	if (radius > 20) {
-	    radius = 20;
-	} else if (radius < 5) {
-	    radius = 8;
-	}
+var iconCache = {};
 
-	alpha = freeBikes / (freeBikes+emptySlots);
-	if (alpha > 0.5 && alpha < 1.0) {
-	    alpha=0.5;
-	} else if (alpha < 0.1 && alpha > 0.0) {
-	    alpha = 0.1;
-	}
+function getIcon(freeBikes, emptySlots) {
+  var cacheKey = freeBikes + '-' + emptySlots;
+  if (iconCache[cacheKey]) {
+    return iconCache[cacheKey];
+  }
+
+  var imageCanvas, context;
+  var radius;
+  var alpha;
+  if (freeBikes == 0 && emptySlots == 0) {
+    // edge case: station with nothing in it
+    radius = 5;
+    alpha = 0.0;
+  } else {
+    radius = (freeBikes+emptySlots)/2;
+    if (radius > 20) {
+      radius = 20;
+    } else if (radius < 5) {
+      radius = 8;
     }
 
-    imageCanvas = document.createElement("canvas");
-    context = imageCanvas.getContext("2d");
+    alpha = freeBikes / (freeBikes+emptySlots);
+    if (alpha > 0.5 && alpha < 1.0) {
+      alpha=0.5;
+    } else if (alpha < 0.1 && alpha > 0.0) {
+      alpha = 0.1;
+    }
+  }
 
-    imageCanvas.width = radius*2+4;
-    imageCanvas.height = radius*2+4;
+  imageCanvas = document.createElement("canvas");
+  context = imageCanvas.getContext("2d");
+  imageCanvas.width = radius*2+4;
+  imageCanvas.height = radius*2+4;
 
-    context.clearRect(0,0,radius*2, radius*2);
+  context.clearRect(0,0,radius*2, radius*2);
 
-    context.fillStyle = "rgba(255,0,0," + alpha + ")";
-    context.beginPath();
-    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
-    context.fill();
+  context.fillStyle = "rgba(255,0,0," + alpha + ")";
+  context.beginPath();
+  context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
+  context.fill();
 
-    context.strokeStyle = "#f00";
-    context.beginPath();
-    context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
-    context.stroke();
+  context.strokeStyle = "#f00";
+  context.beginPath();
+  context.arc(imageCanvas.width/2,imageCanvas.height/2,radius,0,Math.PI*2,true);
+  context.stroke();
 
-    return imageCanvas.toDataURL();
+  iconCache[cacheKey] = imageCanvas.toDataURL();
+  return iconCache[cacheKey];
 }
 
 $(document).ready(function () {
@@ -273,7 +280,7 @@ $(document).ready(function () {
 	  station.marker = new google.maps.Marker({
 	    position: station.latlng,
 	    map: map.map,
-	    icon: createIcon(station.freeBikes, station.emptySlots)
+	    icon: getIcon(station.freeBikes, station.emptySlots)
 	  });
 
 	  bixiStations[bixiStations.length] = station;
