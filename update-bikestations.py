@@ -10,7 +10,7 @@ networkids = [ 'bixi-montreal', 'bixi-toronto', 'capital-bixi', 'hubway',
 
 def process_network(networkid):
     r = requests.get(baseurl + networkid)
-    network = r.json()['network']
+    network = json.loads(r.content)['network']
 
     # output just the stations that are installed, only the metadata we care
     # about
