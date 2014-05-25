@@ -356,7 +356,7 @@ $(document).ready(function () {
         }
       }
     }
-  }).configure();
+  }).configure({ 'notfound': function() { window.location.hash = "/networks/" + networkId; } });
 
   router.init("/networks/" + networkId);
 });
