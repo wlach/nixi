@@ -128,7 +128,6 @@ $(document).ready(function () {
         });
 
         function updatePlace(placeName) {
-            _gaq.push(['_trackPageview', '/find-nearby']);
             $("#nearby-input").val(placeName)
             $("#nearby-input").blur();
 
