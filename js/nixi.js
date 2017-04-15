@@ -54,7 +54,7 @@ function getIcon(freeBikes, emptySlots) {
 }
 
 $(document).ready(function () {
-    $.getJSON('http://api.citybik.es/v2/networks/', function(data) {
+    $.getJSON('https://api.citybik.es/v2/networks/', function(data) {
         var networks = _.filter(data.networks, function(network) {
             return _.includes(networkIds, network.id);
         });
@@ -269,7 +269,7 @@ $(document).ready(function () {
             $("#nearby-content").hide();
             $("#nearby-input").val("");
             $("#selected-network").html(currentNetwork.location.city);
-            $.getJSON('http://api.citybik.es/v2/networks/' + networkId, function(data) {
+            $.getJSON('https://api.citybik.es/v2/networks/' + networkId, function(data) {
                 updateDisplay();
 
                 // new stations + bounds
